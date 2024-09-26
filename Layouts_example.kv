@@ -1,0 +1,225 @@
+<BoxLayout_top_btn@BoxLayout>:
+    orientation:'horizontal'
+    spacing:30
+    size_hint_y:.1
+<Button_next_screen@Button>:
+    size_hint: .22,None
+    size:0,30
+    text:'next screen'
+<Button_info@Button>:
+    text:'info'
+    size_hint: .22,None
+    size:0,30
+<GridButton@Button>:
+    font_size: 50
+
+
+
+<Main>:
+    BoxLayout:
+        padding:10
+        orientation:'vertical'
+        BoxLayout_top_btn:
+            Button_next_screen:
+                on_press:root.manager.current=str(root.manager.next())
+            Button_info:
+                on_press:root.create_info()
+
+        Label:
+            halign: "center"
+            markup: True
+            multiline:True
+            size_hint:(1,None)
+            font_size:20
+            text: root.showcoord_btn
+
+
+        ScrollView:
+            size_hint_y:.9
+            FloatLayout:
+                id:my_box
+                size_hint_y:None
+                height:1000
+                canvas:
+                    Color:
+                        rgb:(115/255,115/255,115/255)
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+
+<Second>:
+    BoxLayout:
+        padding:10
+        orientation:'vertical'
+        BoxLayout_top_btn:
+            Button_next_screen:
+                on_press:root.manager.current=str(root.manager.next())
+
+            Button:
+                text:'Ориентация'
+                on_release:root.change_orient()
+                size_hint:.22,None
+                size:0,30
+            Button_info:
+                on_press:root.create_info()
+        Label:
+            text:root.orient_box
+            size_hint:(1,.2)
+            font_size: 20
+            markup: True
+
+        BoxLayout:
+            spacing:10
+            orientation:root.change_orient_box
+            BoxLayout:
+                spacing:10
+                Button:
+                    text:'button 1'
+                Button:
+                    text:'button 2'
+            Button:
+                text:'button 3'
+            Button:
+                text:'button 4'
+
+
+<Third>:
+    BoxLayout:
+        orientation:'vertical'
+        padding:10
+        BoxLayout_top_btn:
+            Button_next_screen:
+                on_press:root.manager.current=str(root.manager.next())
+            Button_info:
+                on_press:root.create_info()
+        Label:
+            text:"Это [color=#3d4cf2]Scatter[/color]\nВы можете перемещать и вращать объекты"
+            font_size: 20
+            halign:'center'
+            size_hint:(1,.2)
+            font_size: 20
+            markup: True
+        FloatLayout:
+            size_hint:1,1
+            canvas:
+                Color:
+                    rgb:(115/255,115/255,115/255)
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            Scatter:
+                id:scat_2
+                size_hint:None,None
+                size:100,100
+                pos: 400,300
+
+                rotation: 130
+                scale_min:.5
+                scale_max: 2
+                Label
+                    font_size:30
+                    text: "world"
+                    color: .5,1,0,1
+                    id:lab
+                    size_hint:None,None
+                    size:scat_2.size
+                    canvas.before:
+                        Color:
+                            rgba:(.5,0,0,1)
+                        Line:
+                            width: 2
+                            rectangle:self.x,self.y,self.width,self.height
+            Scatter:
+                id:scat_3
+                size_hint:None,None
+                size:100,100
+                pos: 100,250
+                scale_min:.5
+                scale_max: 2
+                Label
+                    text: "Scatter"
+                    color: .2,.1,.4,1
+                    id:lab
+                    size_hint:None,None
+                    size:scat_3.size
+                    canvas.before:
+                        Color:
+                            rgba:29/255, 87/255, 38/255,.5
+                        Ellipse:
+                            pos: self.pos
+                            size: self.size
+            Scatter:
+                size_hint:None,None
+                size:100,150
+                pos: 50,78
+                scale_min:.5
+                scale_max: 2
+                canvas:
+                    Ellipse:
+                        source: "C:\\Project_worktime\\Learning Kivy\\PNG\\10001.jpg"
+
+<Fourth>:
+    BoxLayout:
+        padding:10
+        orientation:'vertical'
+        BoxLayout_top_btn:
+            Button_next_screen:
+                on_press:root.manager.current=str(root.manager.next())
+            Button_info:
+                on_press:root.create_info()
+        Label:
+            id: calculate
+            markup: True
+            size_hint:(1,.2)
+            font_size:20
+            text: "[color=#3d4cf2]GridLayout[/color]  Сетка"
+
+        MyGridLayout:
+        # класс в .py файле
+            id: myglayout
+            GridLayout:
+                cols:2
+                GridButton:
+                    text: "7.1"
+                    on_press: myglayout.pressfunc(self)
+                GridButton:
+                    text: "7.2"
+                    on_press: myglayout.pressfunc(self)
+                GridButton:
+                    text: "7.3"
+                    on_press: myglayout.pressfunc(self)
+                GridButton:
+                    text: "7.4"
+                    on_press: myglayout.pressfunc(self)
+            GridLayout:
+                cols:2
+                GridButton:
+                    text: "8.1"
+                    on_press: myglayout.pressfunc(self)
+                GridButton:
+                    text: "8.2"
+                    on_press: myglayout.pressfunc(self)
+            GridButton:
+                text: "9"
+                on_press: myglayout.pressfunc(self)
+            GridButton:
+                text: "10"
+                on_press: myglayout.pressfunc(self)
+            GridButton:
+                id: clear_calc
+                text: "Clear"
+                on_press: myglayout.clear_calc()
+            GridLayout:
+                cols:2
+
+                GridButton:
+                    text: "+"
+                    font_size: 120
+                    on_press: myglayout.pressfunc(self)
+                GridButton:
+                    text: "-"
+                    font_size: 120
+                    on_press: myglayout.pressfunc(self)
+                
+
