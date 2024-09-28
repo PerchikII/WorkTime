@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 
 import random as rd
-import info_text
 
 from kivy.app import App
 
@@ -14,15 +13,52 @@ from kivy.uix.popup import Popup
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty,NumericProperty
 
-Builder.load_file('Layouts_example.kv')
+import os
+"""Установить kv файл в директорию совместно в main.py"""
+dirname = os.path.split(os.path.abspath(__file__))
+Builder.load_file(os.path.join(dirname[0],"Layouts_example.kv"))
+# создать путь для импорта info_text.py
+
+
+TXT_Screen_Main = """                   FloatLayout, Button
+FloatLayout- это макет(Layout) в котором вы можете расположить виджеты
+в определённой позиции относительно размера макета(Layout)
+Widget.[color=#f34040]pos_hint=[/color]{[color=#057001]"x"[/color]:[color=#0476bd].4[/color],[color=#057001]"center_y"[/color]:[color=#0476bd].5[/color]},так и в любой фиксированной позиции 
+Widget.[color=#f34040]pos=[/color]([color=#0476bd]100[/color],[color=#0476bd]333[/color]) .
+Button - это кнопка
+Св-во [color=#f34040]size_hint=[/color]([color=#0476bd].1[/color],[color=#0476bd].2[/color]) отвечает за размер виджета относительно размера макета
+Для того,чтобы задать фиксированный размер св-во: [color=#f34040]size_hint=[/color]([color=#ada817]None[/color], [color=#ada817]None[/color]).
+[color=#f34040]size=[/color]([color=#0476bd]100[/color],[color=#0476bd]50[/color])
+На кнопках указаны координаты по которым они расположены."""
+
+TXT_Screen_Second = """         BoxLayout размещает виджеты либо [color=#e85b58][b]вертикально[/b][/color], один над другим, 
+                либо [color=#e85b58][b]горизонтально[/b][/color], один за другим слева направо. 
+                Нажимайте кнопку "ориентация", чтобы увидеть наглядно."""
+TXT_Screen_Third = """          Для того, чтобы вращать [color=#3d4cf2]Scatter[/color], нужно поставить пр.кнопкой мыши 
+                красную точку, имитирующую нажатие пальцем на экран, далее 
+                зажав лев. кнопку мыши вращать либо изменять масштаб объекта."""
+TXT_Screen_Fourth = """[color=#3d4cf2]GridLayout[/color]
+    Располагает детей в матрице. Берет доступное пространство и делит его 
+    на столбцы и строки, затем добавляет виджеты в полученные «ячейки».
+    В отличие от многих других наборов инструментов, вы не можете явно 
+    поместить виджет в определенный столбец/строку. Каждому дочернему 
+    элементу автоматически назначается позиция, определяемая конфигурацией 
+    макета и индексом дочернего элемента в списке дочерних элементов.
+
+            [color=#3d4cf2]GridLayout[/color] всегда должен иметь хотя бы один параметр: 
+            [color=#f34040]rows=[/color] или [color=#f34040]cols=[/color]. 
+            Если вы не укажете столбцы([color=#f34040]cols[/color]) или строки([color=#f34040]rows[/color]),
+            Layout выдаст исключение."""
+
 
 
 class MyButton(Button):
     def __init__(self, text, **kwargs):
         super(MyButton, self).__init__(**kwargs)
         self.text = text
+
 class MyScatter(Scatter):
     def __init__(self, size: tuple, pos: tuple, label_text: str, **kwargs):
         super(MyScatter, self).__init__(**kwargs)
@@ -53,36 +89,39 @@ class My_Pop(Popup):
 
         self.title = "Info"
         self.text = text
-        self.size_hint = (1, 1)
+        self.size_hint = (1,1)
+        self.auto_dismiss = True
         container = FloatLayout(size_hint=(1, 1))
 
         lab = Label(text=self.text, font_size=20, markup=True,
-                    size_hint=(1, .8), pos_hint={'x': .001, 'top': 1},
+                    size_hint=(1, 1), pos_hint={'x': .001, 'top': 1},
                     halign='center')
         container.add_widget(lab)
-        btn = MyButton("Закрыть", size_hint=(.2, .1),
+        btn = MyButton("Закрыть", size_hint=(.7,.1),
                        pos_hint={'center_x': .5, 'y': .1},
                        on_press=self.dismiss)
         container.add_widget(btn)
-        self.content = container
+        self.content = container # Расположить на Popup
         self.open()
-
 
 class Main(Screen):
     showcoord_btn = StringProperty('[color=#03fcb1]FloatLayout[/color]\nсовмесно со [color=#03fcb1]ScrollView[/color] widget')
-
+    coord_x = 20
+    coord_y = 50
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        for i in range(30):
-            self.btn = Button(size_hint=(None, None), size=(100, 50),
+        for i in range(10):
+            self.btn = Button(size_hint=(None, None), size=(200, 50),
                               on_press=self.show_coord)
             self.btn.pos = self.pos_button()
             self.btn.text = f'x={self.btn.pos[0]}\ny={self.btn.pos[1]}'
             self.ids.my_box.add_widget(self.btn)
 
     def pos_button(self):
-        x = rd.randint(50, 500)
-        y = rd.randint(100, 1000)
+        x = rd.randint(10, 300)
+        y = rd.randint(self.coord_y, self.coord_y+300)
+        self.coord_x += 50
+        self.coord_y += 100
         return (x, y)
 
     def show_coord(self, touch):
@@ -91,8 +130,7 @@ class Main(Screen):
 
     def create_info(self):
         """Создание Popup окна с информацией"""
-        My_Pop(info_text.TXT_Screen_Main)
-
+        My_Pop(TXT_Screen_Main)
 
 class Second(Screen):
     change_orient_box = StringProperty('horizontal')
@@ -112,9 +150,7 @@ class Second(Screen):
 
     def create_info(self):
         """Создание Popup окна с информацией"""
-        My_Pop(info_text.TXT_Screen_Second)
-
-
+        My_Pop(TXT_Screen_Second)
 
 class Third(Screen):
     def __init__(self, **kwargs):
@@ -123,7 +159,7 @@ class Third(Screen):
 
     def create_info(self):
         """Создание Popup окна с информацией"""
-        My_Pop(info_text.TXT_Screen_Third)
+        My_Pop(TXT_Screen_Third)
 
 class MyGridLayout(GridLayout):
     def __init__(self,**kwargs):
@@ -142,13 +178,10 @@ class MyGridLayout(GridLayout):
         c_list.append(instance.text)
         self.grid_label.text = ''
         self.grid_label.text = ''.join(c_list)
-        print(c_list)
         if len(c_list) == 3 and c_list[1] == '+':
-            print(c_list, c_list[1])
             self.grid_label.text = str(eval('+'.join(c_list)))
             c_list.clear()
         elif len(c_list) == 3 and c_list[1] == '-':
-            print(c_list, c_list[1])
             self.grid_label.text = str(eval('-'.join(c_list)))
             c_list.clear()
         elif len(c_list) == 3:
@@ -161,24 +194,29 @@ class MyGridLayout(GridLayout):
 class Fourth(Screen):
     def __init__(self,**kwargs):
         super(Fourth,self).__init__(**kwargs)
-        # lst = [x for x in self.walk()]
-        # print(lst[5].text)
-        # lst[5].text='333333'
 
     def create_info(self):
         """Создание Popup окна с информацией"""
-        My_Pop(info_text.TXT_Screen_Fourth)
+        My_Pop(TXT_Screen_Fourth)
 
-class Layouts_exampleApp(App):
+class MyApp(App):
     def build(self):
         sm = ScreenManager()
         sm.add_widget(Main(name='first'))
         sm.add_widget(Second(name='second'))
         sm.add_widget(Third(name='third'))
         sm.add_widget(Fourth(name='fourth'))
-        sm.current = "fourth"
+        sm.current = "first"
         return sm
+    def on_start(self):
+        print('Начали')
+
+    def on_pause(self):
+        print("Пауза")
+
+    def on_stop(self):
+        print("Остановка")
 
 
 if __name__ == "__main__":
-    Layouts_exampleApp().run()
+    MyApp().run()

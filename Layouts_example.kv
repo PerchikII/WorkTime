@@ -3,15 +3,21 @@
     spacing:30
     size_hint_y:.1
 <Button_next_screen@Button>:
-    size_hint: .22,None
-    size:0,30
+    size_hint: .22,1
     text:'next screen'
 <Button_info@Button>:
     text:'info'
-    size_hint: .22,None
-    size:0,30
+    size_hint: .22,1
 <GridButton@Button>:
     font_size: 50
+<InfoLabel@Label>
+    halign: "center"
+    markup: True
+    multiline:True
+    size_hint:(1,.25)
+    font_size:30
+
+
 
 
 
@@ -25,24 +31,26 @@
             Button_info:
                 on_press:root.create_info()
 
-        Label:
-            halign: "center"
-            markup: True
-            multiline:True
-            size_hint:(1,None)
-            font_size:20
+        InfoLabel:
             text: root.showcoord_btn
 
 
         ScrollView:
             size_hint_y:.9
+            size_hint_x: 1
+            do_scroll_x: False
+            do_scroll_y: True
+
             FloatLayout:
                 id:my_box
                 size_hint_y:None
-                height:1000
+                size_hint_x: 1
+                height: 1300
+
+
                 canvas:
                     Color:
-                        rgb:(115/255,115/255,115/255)
+                        rgb:(215/255,215/255,115/255)
                     Rectangle:
                         pos: self.pos
                         size: self.size
@@ -58,15 +66,12 @@
             Button:
                 text:'Ориентация'
                 on_release:root.change_orient()
-                size_hint:.22,None
-                size:0,30
+                size_hint:.22,1
             Button_info:
                 on_press:root.create_info()
-        Label:
+        InfoLabel:
             text:root.orient_box
-            size_hint:(1,.2)
-            font_size: 20
-            markup: True
+
 
         BoxLayout:
             spacing:10
@@ -92,13 +97,9 @@
                 on_press:root.manager.current=str(root.manager.next())
             Button_info:
                 on_press:root.create_info()
-        Label:
+        InfoLabel:
             text:"Это [color=#3d4cf2]Scatter[/color]\nВы можете перемещать и вращать объекты"
-            font_size: 20
-            halign:'center'
-            size_hint:(1,.2)
-            font_size: 20
-            markup: True
+
         FloatLayout:
             size_hint:1,1
             canvas:
@@ -157,7 +158,7 @@
                 scale_max: 2
                 canvas:
                     Ellipse:
-                        source: "C:\\Project_worktime\\Learning Kivy\\PNG\\10001.jpg"
+                        size: self.size
 
 <Fourth>:
     BoxLayout:
@@ -168,11 +169,8 @@
                 on_press:root.manager.current=str(root.manager.next())
             Button_info:
                 on_press:root.create_info()
-        Label:
+        InfoLabel:
             id: calculate
-            markup: True
-            size_hint:(1,.2)
-            font_size:20
             text: "[color=#3d4cf2]GridLayout[/color]  Сетка"
 
         MyGridLayout:
