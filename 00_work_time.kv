@@ -3,58 +3,61 @@
     BoxLayout:
         orientation: "vertical"
         size: root.size
-
         BoxLayout:
-            size_hint: 1,.02
-            spacing:10
-            padding: [20,10,0,0]
-            Spinner:
-                id: day
-                size_hint: None, None
-                size_hint: 1, 1
-                pos_hint: {"top":1}
-                font_size: 50
-                text: root.day_spinner_str
-                values: map(str,list(range(1,32)))
-                on_text: root.create_date()
+            size_hint: 1, .015
+            BoxLayout:
+                spacing:10
+                padding: [20,10,20,0]
+                Spinner:
+                    id: day
+                    size_hint: None, None
+                    size_hint: 1, 1
+                    pos_hint: {"top":1}
+                    font_size: 50
+                    text: root.day_spinner_str
+                    values: map(str,list(range(1,32)))
+                    on_text: root.create_date()
 
-            Spinner:
-                id: month
-                size_hint: None, None
-                pos_hint: {"left":1,"top":1}
-                size_hint: 1, 1
-                font_size: 40
-                text: root.month_spinner_str
-                values: map(str,root.month_lst_property)
-                on_text: root.create_date()
-                spacing: 100
-            Spinner:
-                id: hour
-                size_hint: None, None
-                size_hint: 1, 1
-                pos_hint: {"right":1,"top":1}
-                font_size: 50
-                text: root.hours_spinner_str
-                values: map(str,list(range(25)))
-                on_text: root.create_date()
-            Label:
-                size_hint: None, None
-                size_hint: 1, 1
-                pos_hint: {"right":1,"top":1}
-                font_size: 50
-                text: ":"
-                values: map(str,list(range(25)))
-                on_text: root.create_date()
+                Spinner:
+                    id: month
+                    size_hint: None, None
+                    pos_hint: {"left":1,"top":1}
+                    size_hint: 1, 1
+                    font_size: 40
+                    text: root.month_spinner_str
+                    values: map(str,root.month_lst_property)
+                    on_text: root.create_date()
+                    spacing: 100
+            BoxLayout:
+                #size_hint: 1,.02
+                padding:[20,10,20,0]
+                Spinner:
+                    id: hour
+                    size_hint: None, None
+                    size_hint: 1, 1
+                    pos_hint: {"right":1,"top":1}
+                    font_size: 50
+                    text: root.hours_spinner_str
+                    values: map(str,list(range(25)))
+                    on_text: root.create_date()
+                Label:
+                    size_hint: None, None
+                    size_hint: .1, 1
+                    pos_hint: {"right":1,"top":1}
+                    font_size: 50
+                    text: ":"
+                    values: map(str,list(range(25)))
+                    on_text: root.create_date()
 
-            Spinner:
-                id: minute
-                size_hint: None, None
-                pos_hint: {"right":1,"top":1}
-                size_hint: 1, 1
-                font_size: 50
-                text: root.minutes_spinner_str
-                values: map(str,list(range(0,60)))
-                on_text: root.create_date()
+                Spinner:
+                    id: minute
+                    size_hint: None, None
+                    pos_hint: {"right":1,"top":1}
+                    size_hint: 1, 1
+                    font_size: 50
+                    text: root.minutes_spinner_str
+                    values: map(str,list(range(0,60)))
+                    on_text: root.create_date()
 
         Label:
             id:lab101
