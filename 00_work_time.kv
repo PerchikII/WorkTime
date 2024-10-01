@@ -1,3 +1,7 @@
+<TimeSpinner@Spinner>
+    size_hint: 1, 1
+    pos_hint: {"right":1,"top":1}
+    font_size: 50
 <Pages>:
     Widget:
         BoxLayout:
@@ -35,39 +39,33 @@
                     padding:[20,10,20,0]
                     Label:
                         id: label_time
-                        size_hint: 1, .2
+                        size_hint: 1, 1
                         font_size: 25
                         text: "установите НАЧАЛО\n      рабочего дня"
                     BoxLayout:
                         id: box_time_begin_work
-                        Spinner:
+                        TimeSpinner:
                             id: hour
-                            size_hint: 1, .5
-                            pos_hint: {"right":1,"bottom":1}
-                            font_size: 50
                             text: root.hours_spinner_str
                             values: map(str,list(range(25)))
                             on_text: root.create_date()
                         Label:
-                            size_hint: .1, .5
+                            size_hint: .1, 1
                             pos_hint: {"right":1,"bottom":1}
                             font_size: 50
                             text: ":"
                             values: map(str,list(range(25)))
                             on_text: root.create_date()
 
-                        Spinner:
+                        TimeSpinner:
                             id: minute
-                            pos_hint: {"right":1,"bottom":1}
-                            size_hint: 1, .5
-                            font_size: 50
                             text: root.minutes_spinner_str
                             values: map(str,list(range(0,60)))
                             on_text: root.create_date()
 
             BoxLayout:
                 padding: [20,0,0,0]
-                id: box_time_end_work_root
+                id: box_time_lunch_endwork_root
                 size_hint: 1,.1
                 BoxLayout:
                     orientation: "vertical"
@@ -80,11 +78,8 @@
                         pos_hint: {"top":1}
                         text: "установите НАЧАЛО ОБЕДА"
                     BoxLayout:
-                        Spinner:
+                        TimeSpinner:
                             id: hour_lunch
-                            size_hint: 1, 1
-                            pos_hint: {"right":1,"top":1}
-                            font_size: 50
                             text: root.hours_spinner_str
                             values: map(str,list(range(25)))
                             on_text: root.create_date()
@@ -96,11 +91,8 @@
                             values: map(str,list(range(25)))
                             on_text: root.create_date()
 
-                        Spinner:
+                        TimeSpinner:
                             id: minute_lunch
-                            pos_hint: {"right":1,"top":1}
-                            size_hint: 1, 1
-                            font_size: 50
                             text: root.minutes_spinner_str
                             values: map(str,list(range(0,60)))
                             on_text: root.create_date()
@@ -115,11 +107,8 @@
                         font_size: 25
                         text: "установите КОНЕЦ\n      рабочего дня"
                     BoxLayout:
-                        Spinner:
+                        TimeSpinner:
                             id: hour_time_end_work
-                            size_hint: 1, 1
-                            pos_hint: {"right":1,"top":1}
-                            font_size: 50
                             text: root.hours_spinner_str
                             values: map(str,list(range(25)))
                             on_text: root.create_date()
@@ -131,11 +120,8 @@
                             values: map(str,list(range(25)))
                             on_text: root.create_date()
 
-                        Spinner:
+                        TimeSpinner:
                             id: minute
-                            pos_hint: {"right":1,"top":1}
-                            size_hint: 1, 1
-                            font_size: 50
                             text: root.minutes_spinner_str
                             values: map(str,list(range(0,60)))
                             on_text: root.create_date()
