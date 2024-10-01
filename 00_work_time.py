@@ -27,11 +27,17 @@ CURRENT_MINUTES = time.strftime("%M", time_day)
 
 class Pages(Carousel):
     hours_start_work = StringProperty("HStW")
-    minutes_start_work_minutes = StringProperty("00")
+    minutes_start_work_minutes = StringProperty("MinStW")
 
     hours_end_work = StringProperty("HEndW")
+    minutes_end_work = StringProperty("MinEndW")
+
     hours_start_lunch = StringProperty("HStlanch")
+    minutes_start_lunch = StringProperty("MinStlanch")
+
+
     hours_end_lanch = StringProperty("HEndLanch")
+    minutes_end_lunch = StringProperty("MinStlanch")
 
     minutes_spinner_str = StringProperty("00")
     day_spinner_str = StringProperty(CURRENT_DAY)
@@ -45,6 +51,8 @@ class Pages(Carousel):
         # self._month = self.month_spinner_str
         self._hours_start_work = self.hours_start_work
         self._minutes = self.minutes_start_work_minutes
+        """"""
+        self._hours_end_work = self.hours_end_work
 
     def create_start_work_time(self,spinner):
         if spinner.uid == 118:

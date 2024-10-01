@@ -1,7 +1,7 @@
 <TimeSpinner@Spinner>
     size_hint: 1, 1
     pos_hint: {"right":1,"top":1}
-    font_size: 50
+    font_size: 30
 <Pages>:
     Widget:
         BoxLayout:
@@ -57,7 +57,7 @@
 
                         TimeSpinner:
                             id: startworkminute
-                            text: root.minutes_spinner_str
+                            text: root.minutes_start_work_minutes
                             values: map(str,list(range(0,60)))
                             on_text: root.create_start_work_time(self)
 
@@ -70,14 +70,14 @@
                     id: lunch_time_box
                     size_hint: 1,1
                     Label:
-                        id: label_time_lunch
+                        id: label_start_lunch
                         size_hint: 1,1
                         font_size: 25
                         pos_hint: {"top":1}
                         text: "установите НАЧАЛО ОБЕДА"
                     BoxLayout:
                         TimeSpinner:
-                            id: hour_lunch
+                            id: hourstartlunch
                             text: root.hours_start_lunch
                             values: map(str,list(range(25)))
                             on_text: root.create_date()
@@ -90,8 +90,8 @@
                             on_text: root.create_date()
 
                         TimeSpinner:
-                            id: minute_lunch
-                            text: root.minutes_spinner_str
+                            id: minutestartlunch
+                            text: root.minutes_start_lunch
                             values: map(str,list(range(0,60)))
                             on_text: root.create_date()
                 BoxLayout:
@@ -100,13 +100,13 @@
                     padding:[20,10,20,0]
                     size_hint: 1,1
                     Label:
-                        id: hours_end_work
+                        id: hoursendwork
                         size_hint: 1, 1
                         font_size: 25
                         text: "установите КОНЕЦ\n      рабочего дня"
                     BoxLayout:
                         TimeSpinner:
-                            id: hour_time_end_work
+                            id: hourendwork
                             text: root.hours_end_work
                             values: map(str,list(range(25)))
                             on_text: root.create_date()
@@ -119,8 +119,8 @@
                             on_text: root.create_date()
 
                         TimeSpinner:
-                            id: minute
-                            text: root.minutes_spinner_str
+                            id: minutesendwork
+                            text: root.minutes_end_work
                             values: map(str,list(range(0,60)))
                             on_text: root.create_date()
             BoxLayout:
@@ -131,13 +131,13 @@
                     orientation: "vertical"
                     padding:[20,10,20,0]
                     Label:
-                        id: label_time
+                        id: label_end_lunch
                         size_hint: 1, 1
                         font_size: 25
                         text: "установите КОНЕЦ ОБЕДА"
                     BoxLayout:
                         TimeSpinner:
-                            id: hour
+                            id: hoursendlanch
                             text: root.hours_end_lanch
                             values: map(str,list(range(25)))
                             on_text: root.create_date()
@@ -150,8 +150,8 @@
                             on_text: root.create_date()
 
                         TimeSpinner:
-                            id: minute
-                            text: root.minutes_spinner_str
+                            id: minutesendlunch
+                            text: root.minutes_end_lunch
                             values: map(str,list(range(0,60)))
                             on_text: root.create_date()
 
