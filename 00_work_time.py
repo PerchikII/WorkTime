@@ -12,7 +12,7 @@ import os
 """Установить kv файл в директорию совместно в main.py"""
 dirname = os.path.split(os.path.abspath(__file__))
 Builder.load_file(os.path.join(dirname[0],"00_work_time.kv"))
-print(os.path.join(dirname[0]))
+
 
 month_lst = ['Январь', 'Февраля', 'Марта', 'Апреля','Мая', 'Июня',
              'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря']

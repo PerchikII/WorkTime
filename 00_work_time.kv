@@ -163,20 +163,63 @@
                     halign: "center"
                     size_hint:1,1
                     pos_hint:{'center_x':.5,"top":1}
-                    text: "  На дату"+'\n'+' '.join(root.label_month_lst_property)
+                    text: "На дату:\n"+' '.join(root.label_month_lst_property)
                     font_size: 30
-            Label:
-                id:lab101
+            BoxLayout:
+                padding:[20,0,20,0]
                 size_hint:1,.1
-                pos_hint:{'center_x':.5,"top":1}
-                text: ' '.join(root.label_month_lst_property)
-                font_size: 30
-            Button:
-                size_hint:1,.1
-                pos_hint:{'center_x':.5,"top":1}
-                text: "Сохранить"
-                font_size: 30
-                on_press: root.load_next()
+                Label:
+                    size_hint:.8,1
+                    text: "Отработано:"
+                    text_size: self.size
+                    valign: "center"
+                    halign: "left"
+                    font_size: 50
+                Label:
+                    id:total_work_hours_int
+                    size_hint:.2,1
+                    text_size: self.size
+                    valign: "center"
+                    halign: "center"
+                    text: "8"
+                    font_size: 50
+                Label:
+                    size_hint:.2,1
+                    text_size: self.size
+                    valign: "center"
+                    halign: "center"
+                    text: "Часов"
+                    font_size: 30
+                Label:
+                    id:total_work_minutes_int
+                    size_hint:.2,1
+                    text_size: self.size
+                    valign: "center"
+                    halign: "center"
+                    text: "30"
+                    font_size: 50
+                Label:
+                    size_hint:.2,1
+                    text_size: self.size
+                    valign: "center"
+                    halign: "center"
+                    text: "Минут"
+                    font_size: 30
+            BoxLayout:
+                size_hint:1,.045
+                padding:20
+                Button:
+                    size_hint:1,1
+                    pos_hint:{'center_x':.5,"top":1}
+                    text: "Сохранить"
+                    font_size: 30
+                    on_press: root.load_next()
+                Button:
+                    size_hint:1,1
+                    pos_hint:{'center_x':.5,"top":1}
+                    text: "Выход"
+                    font_size: 30
+                    on_press: root.quit()
 
 <Pages>:
     FloatLayout:
