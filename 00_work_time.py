@@ -47,7 +47,6 @@ class Pages(Carousel):
         self._minutes = self.minutes_start_work_minutes
 
     def create_start_work_time(self,spinner):
-        print(spinner.uid)
         if spinner.uid == 118:
             self.hours_start_work = spinner.text
         elif spinner.uid == 159:
