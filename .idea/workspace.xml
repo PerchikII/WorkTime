@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2abe9b09-9dc8-4363-b554-c547d58a58a4" name="Changes" comment="TimeSpinner@Spinner">
+      <change afterPath="$PROJECT_DIR$/.idea/Learning_Kivy.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/info_text.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_work_time.kv" beforeDir="false" afterPath="$PROJECT_DIR$/00_work_time.kv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/00_work_time.py" beforeDir="false" afterPath="$PROJECT_DIR$/00_work_time.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Layouts_example.py" beforeDir="false" afterPath="$PROJECT_DIR$/Layouts_example.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="d78577442da1bab1e3e316049f476a1dafbed95e" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2mbgpB7RG7V3VkGhD0ZpKf8F4Ke" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.00_time.executor&quot;: &quot;Run&quot;,
+    &quot;Python.00_work_time (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.00_work_time.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ActionBar_ex.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Akkordion_example.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Android_code_1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Button_flag.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Carousel.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Checkbox_ex.executor&quot;: &quot;Run&quot;,
+    &quot;Python.FLayout_exm.executor&quot;: &quot;Run&quot;,
+    &quot;Python.FileChoise.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Layouts_example (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.Layouts_example.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Spaling_lang.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.Text_inp_examp.executor&quot;: &quot;Run&quot;,
+    &quot;Python.e3.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/PythonProgramming/LearningPython&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editing.templates&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\PythonProgramming\Learning_Kivy\PNG" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="00_work_time" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Learning_Kivy" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/00_work_time.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.00_work_time" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-884f5ed5d46b-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.22855.92" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2abe9b09-9dc8-4363-b554-c547d58a58a4" name="Changes" comment="" />
+      <created>1727350870360</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1727350870360</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Main.Рабочая версия">
+      <option name="closed" value="true" />
+      <created>1727351982374</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1727351982374</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Main.Рабочая версия">
+      <option name="closed" value="true" />
+      <created>1727545950456</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1727545950457</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Main.WorkTime">
+      <option name="closed" value="true" />
+      <created>1727705200890</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1727705200890</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Установил верхний BoxLayout">
+      <option name="closed" value="true" />
+      <created>1727705706885</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1727705706885</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Добавил время начала обеда. Конец рабочего дня.">
+      <option name="closed" value="true" />
+      <created>1727719492724</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1727719492724</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Доб. карусель.&#10;Всё работает.">
+      <option name="closed" value="true" />
+      <created>1727766278840</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1727766278840</updated>
+    </task>
+    <task id="LOCAL-00007" summary="TimeSpinner@Spinner">
+      <option name="closed" value="true" />
+      <created>1727767707890</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1727767707890</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Main.Рабочая версия.Layout example." />
+    <MESSAGE value="Main.WorkTime" />
+    <MESSAGE value="Установил верхний BoxLayout" />
+    <MESSAGE value="Добавил время начала обеда. Конец рабочего дня." />
+    <MESSAGE value="Main.Рабочая версия.Layout example." />
+    <MESSAGE value="Доб. карусель.&#10;Всё работает." />
+    <MESSAGE value="TimeSpinner@Spinner" />
+    <option name="LAST_COMMIT_MESSAGE" value="TimeSpinner@Spinner" />
+  </component>
+</project>
