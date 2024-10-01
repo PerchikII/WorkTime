@@ -8,10 +8,14 @@ from kivy.uix.carousel import Carousel
 from kivy.lang.builder import Builder
 from kivy.properties import ListProperty,StringProperty
 
-Builder.load_file("00_work_time.kv")
+import os
+"""Установить kv файл в директорию совместно в main.py"""
+dirname = os.path.split(os.path.abspath(__file__))
+Builder.load_file(os.path.join(dirname[0],"00_work_time.kv"))
+print(os.path.join(dirname[0]))
 
-month_lst = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-             'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
+month_lst = ['Январь', 'Февраля', 'Марта', 'Апреля','Мая', 'Июня',
+             'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря']
 
 time_now = time.time() # Секунды с начала эпохи
 time_day = time.localtime(time_now) # Текущее число
@@ -22,8 +26,14 @@ CURRENT_HOURS = time.strftime("%H", time_day)
 CURRENT_MINUTES = time.strftime("%M", time_day)
 
 class Pages(Carousel):
-    hours_spinner_str = StringProperty(CURRENT_HOURS)
-    minutes_spinner_str = StringProperty(CURRENT_MINUTES)
+    hours_start_work = StringProperty("HStW")
+    minutes_start_work_minutes = StringProperty("00")
+
+    hours_end_work = StringProperty("HEndW")
+    hours_start_lunch = StringProperty("HStlanch")
+    hours_end_lanch = StringProperty("HEndLanch")
+
+    minutes_spinner_str = StringProperty("00")
     day_spinner_str = StringProperty(CURRENT_DAY)
     month_spinner_str = StringProperty(CURRENT_MONTH)
     month_lst_property = ListProperty(month_lst)  # Устан.всех месяцев в Spinner
@@ -31,7 +41,21 @@ class Pages(Carousel):
 
     def __init__(self, **kwargs):
         super(Pages, self).__init__(**kwargs)
-        print(self.ids.keys())
+        # self._day = self.day_spinner_str
+        # self._month = self.month_spinner_str
+        self._hours_start_work = self.hours_start_work
+        self._minutes = self.minutes_start_work_minutes
+
+    def create_start_work_time(self,spinner):
+        print(spinner.uid)
+        if spinner.uid == 118:
+            self.hours_start_work = spinner.text
+        elif spinner.uid == 159:
+            self.minutes_start_work_minutes = spinner.text
+        print(self.hours_start_work)
+        print(self.minutes_start_work_minutes)
+
+
 
     def create_date(self):
         self.label_month_lst_property.clear()
@@ -39,6 +63,7 @@ class Pages(Carousel):
         month = self.ids['month'].text
         self.label_month_lst_property.append(day)
         self.label_month_lst_property.append(month)
+
 
 
 
