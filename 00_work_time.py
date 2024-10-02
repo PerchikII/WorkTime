@@ -27,14 +27,14 @@ CURRENT_MINUTES = time.strftime("%M", time_day)
 
 class Pages(Carousel):
     """Читай переменные. Их имена обо всём говорят."""
-    hours_start_work = StringProperty("HStW")
-    minutes_start_work = StringProperty("MinStW")
+    hours_start_work = StringProperty("00")
+    minutes_start_work = StringProperty("00")
 
-    hours_end_work = StringProperty("HEndW")
-    minutes_end_work = StringProperty("MinEndW")
+    hours_end_work = StringProperty("00")
+    minutes_end_work = StringProperty("00")
 
-    hours_start_lunch = StringProperty("HStlanch")
-    minutes_start_lunch = StringProperty("MinStlanch")
+    hours_start_lunch = StringProperty("00")
+    minutes_start_lunch = StringProperty("00")
 
 
     hours_end_lunch = StringProperty("HEndLanch")
@@ -72,23 +72,31 @@ class Pages(Carousel):
         match spinner.uid:
             case  116:
                 self.hours_start_work = spinner.text
+                print(spinner.uid,self.hours_start_work)
             case  157:
                 self.minutes_start_work = spinner.text
+                print(spinner.uid, self.minutes_start_work)
             case  290:
                 self.hours_end_work = spinner.text
+                print(spinner.uid, self.hours_end_work)
             case  331:
                 self.minutes_end_work = spinner.text
+                print(spinner.uid, self.minutes_end_work)
             case  204:
                 self.hours_start_lunch = spinner.text
+                print(spinner.uid, self.hours_start_lunch)
             case  245:
                 self.minutes_start_lunch = spinner.text
+                print(spinner.uid, self.minutes_start_lunch)
             case  378:
                 self.hours_end_lunch = spinner.text
+                print(spinner.uid, self.hours_end_lunch)
             case  419:
                 self.minutes_end_lunch = spinner.text
+                print(spinner.uid, self.minutes_end_lunch)
 
-        print(spinner.uid)
-        print(self.hours_start_work)
+
+
 
 
 
