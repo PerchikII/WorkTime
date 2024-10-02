@@ -46,6 +46,8 @@ class Pages(Carousel):
     month_lst_property = ListProperty(month_lst)  # Устан.всех месяцев в Spinner
     label_month_lst_property = ListProperty([CURRENT_DAY, CURRENT_MONTH])  # Устан.даты в Label
 
+
+
     def __init__(self, **kwargs):
         super(Pages, self).__init__(**kwargs)
         _hours_start_work = self.hours_start_work
@@ -63,13 +65,33 @@ class Pages(Carousel):
 
 
 
+
+
+
     def create_start_work_time(self,spinner):
-        if spinner.uid == 118:
-            self.hours_start_work = spinner.text
-        elif spinner.uid == 159:
-            self.minutes_start_work_minutes = spinner.text
+        match spinner.uid:
+            case  116:
+                self.hours_start_work = spinner.text
+            case  157:
+                self.minutes_start_work = spinner.text
+            case  290:
+                self.hours_end_work = spinner.text
+            case  331:
+                self.minutes_end_work = spinner.text
+            case  204:
+                self.hours_start_lunch = spinner.text
+            case  245:
+                self.minutes_start_lunch = spinner.text
+            case  378:
+                self.hours_end_lanch = spinner.text
+            case  419:
+                self.minutes_end_lunch = spinner.text
+
+        print(spinner.uid)
         print(self.hours_start_work)
         print(self.minutes_start_work_minutes)
+
+
 
 
 
@@ -86,7 +108,8 @@ class Pages(Carousel):
 class MyApp(App):
     def build(self):
         return Pages()
-
+    def quit_program(self):
+        exit()
 
 if __name__ == '__main__':
     MyApp().run()
