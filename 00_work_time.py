@@ -28,7 +28,7 @@ CURRENT_MINUTES = time.strftime("%M", time_day)
 class Pages(Carousel):
     """Читай переменные. Их имена обо всём говорят."""
     hours_start_work = StringProperty("HStW")
-    minutes_start_work_minutes = StringProperty("MinStW")
+    minutes_start_work = StringProperty("MinStW")
 
     hours_end_work = StringProperty("HEndW")
     minutes_end_work = StringProperty("MinEndW")
@@ -37,7 +37,7 @@ class Pages(Carousel):
     minutes_start_lunch = StringProperty("MinStlanch")
 
 
-    hours_end_lanch = StringProperty("HEndLanch")
+    hours_end_lunch = StringProperty("HEndLanch")
     minutes_end_lunch = StringProperty("MinStlanch")
 
     day_spinner_str = StringProperty(CURRENT_DAY)
@@ -50,17 +50,17 @@ class Pages(Carousel):
 
     def __init__(self, **kwargs):
         super(Pages, self).__init__(**kwargs)
-        _hours_start_work = self.hours_start_work
-        _minutes_start_work_minutes = self.minutes_start_work_minutes
-
-        _hours_end_work = self.hours_end_work
-        _minutes_end_work = self.minutes_end_work
-
-        _hours_start_lunch = self.hours_start_lunch
-        _minutes_start_lunch = self.minutes_start_lunch
-
-        _hours_end_lanch = self.hours_end_lanch
-        _minutes_end_lunch = self.minutes_end_lunch
+        # self._hours_start_work = self.hours_start_work
+        # self._minutes_start_work = self.minutes_start_work
+        #
+        # self._hours_end_work = self.hours_end_work
+        # self._minutes_end_work = self.minutes_end_work
+        #
+        # self._hours_start_lunch = self.hours_start_lunch
+        # self._minutes_start_lunch = self.minutes_start_lunch
+        #
+        # self._hours_end_lunch = self.hours_end_lanch
+        # self._minutes_end_lunch = self.minutes_end_lunch
 
 
 
@@ -83,13 +83,12 @@ class Pages(Carousel):
             case  245:
                 self.minutes_start_lunch = spinner.text
             case  378:
-                self.hours_end_lanch = spinner.text
+                self.hours_end_lunch = spinner.text
             case  419:
                 self.minutes_end_lunch = spinner.text
 
         print(spinner.uid)
         print(self.hours_start_work)
-        print(self.minutes_start_work_minutes)
 
 
 
