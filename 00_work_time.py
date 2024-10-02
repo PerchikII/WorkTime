@@ -1,4 +1,6 @@
 import time
+import os
+from datetime import timedelta
 
 
 import kivy
@@ -8,7 +10,7 @@ from kivy.uix.carousel import Carousel
 from kivy.lang.builder import Builder
 from kivy.properties import ListProperty,StringProperty
 
-import os
+
 """Установить kv файл в директорию совместно в main.py"""
 dirname = os.path.split(os.path.abspath(__file__))
 Builder.load_file(os.path.join(dirname[0],"00_work_time.kv"))
@@ -37,8 +39,11 @@ class Pages(Carousel):
     minutes_start_lunch = StringProperty("00")
 
 
-    hours_end_lunch = StringProperty("HEndLanch")
-    minutes_end_lunch = StringProperty("MinStlanch")
+    hours_end_lunch = StringProperty("00")
+    minutes_end_lunch = StringProperty("00")
+
+    total_hours_work = StringProperty("00")
+    total_minutes_work = StringProperty("00")
 
     day_spinner_str = StringProperty(CURRENT_DAY)
     month_spinner_str = StringProperty(CURRENT_MONTH)
@@ -50,21 +55,6 @@ class Pages(Carousel):
 
     def __init__(self, **kwargs):
         super(Pages, self).__init__(**kwargs)
-        # self._hours_start_work = self.hours_start_work
-        # self._minutes_start_work = self.minutes_start_work
-        #
-        # self._hours_end_work = self.hours_end_work
-        # self._minutes_end_work = self.minutes_end_work
-        #
-        # self._hours_start_lunch = self.hours_start_lunch
-        # self._minutes_start_lunch = self.minutes_start_lunch
-        #
-        # self._hours_end_lunch = self.hours_end_lanch
-        # self._minutes_end_lunch = self.minutes_end_lunch
-
-
-
-
 
 
 
@@ -72,28 +62,62 @@ class Pages(Carousel):
         match spinner.uid:
             case  116:
                 self.hours_start_work = spinner.text
-                print(spinner.uid,self.hours_start_work)
+                #print(spinner.uid,self.hours_start_work)
             case  157:
                 self.minutes_start_work = spinner.text
-                print(spinner.uid, self.minutes_start_work)
+                #print(spinner.uid, self.minutes_start_work)
             case  290:
                 self.hours_end_work = spinner.text
-                print(spinner.uid, self.hours_end_work)
+                #print(spinner.uid, self.hours_end_work)
             case  331:
                 self.minutes_end_work = spinner.text
-                print(spinner.uid, self.minutes_end_work)
+                #print(spinner.uid, self.minutes_end_work)
             case  204:
                 self.hours_start_lunch = spinner.text
-                print(spinner.uid, self.hours_start_lunch)
+                #print(spinner.uid, self.hours_start_lunch)
             case  245:
                 self.minutes_start_lunch = spinner.text
-                print(spinner.uid, self.minutes_start_lunch)
+                #print(spinner.uid, self.minutes_start_lunch)
             case  378:
                 self.hours_end_lunch = spinner.text
-                print(spinner.uid, self.hours_end_lunch)
+                #print(spinner.uid, self.hours_end_lunch)
             case  419:
                 self.minutes_end_lunch = spinner.text
-                print(spinner.uid, self.minutes_end_lunch)
+                #print(spinner.uid, self.minutes_end_lunch)
+        lst_time = (self.hours_start_work, self.minutes_start_work, self.hours_end_work,
+                    self.minutes_end_work, self.hours_start_lunch, self.minutes_start_lunch,
+                    self.hours_end_lunch, self.minutes_end_lunch)
+
+        self.work_time_calc(lst_time)
+
+    def work_time_calc(self,args):
+        Hour_start_work = int(args[0])
+        Min_start_work = int(args[1])
+
+        Hour_end_work = int(args[2])
+        Min_end_work = int(args[3])
+
+        Hour_start_lunch = int(args[4])
+        Min_start_lunch = int(args[5])
+        Hour_end_lunch = int(args[6])
+        Min_end_lunch = int(args[7])
+
+        time_start_lunch = timedelta(hours=Hour_start_lunch, minutes=Min_start_lunch)
+        time_end_lunch = timedelta(hours=Hour_end_lunch, minutes=Min_end_lunch)
+        total_time_lunch = time_end_lunch - time_start_lunch
+
+
+        time_start_work = timedelta(hours=Hour_start_work,minutes=Min_start_work)
+        time_end_work = timedelta(hours=Hour_end_work,minutes=Min_end_work)
+
+        total_time_work = (time_end_work - time_start_work) - total_time_lunch
+        if len(str(total_time_work)) == 8:
+            self.total_hours_work = str(total_time_work)[:2]
+        else:
+            self.total_hours_work = str(total_time_work)[0]
+        self.total_minutes_work = str(total_time_work)[-5:-3]
+        print(total_time_work,self.total_hours_work,self.total_minutes_work)
+        print(len(str(total_time_work)))
 
 
 
