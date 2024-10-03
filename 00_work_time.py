@@ -6,7 +6,6 @@ import pickle
 
 import kivy
 from kivy.app import App
-from kivy.config import value
 from kivy.uix.popup import Popup
 from kivy.uix.carousel import Carousel
 from kivy.uix.label import Label
@@ -31,47 +30,12 @@ CURRENT_MONTH = month_lst[number_month - 1]
 CURRENT_HOURS = time.strftime("%H", time_day)
 CURRENT_MINUTES = time.strftime("%M", time_day)
 
-class My_Pop(Popup):
-
-    def __init__(self, **kwargs):
-        super(My_Pop, self).__init__(**kwargs)
-
-        self.title = "Info"
-        self.size_hint = (.8,.4)
-        self.auto_dismiss = False # Выключить Popup на люб.месте вне экрана
-        container = FloatLayout(size_hint=(1, 1))
-        lab = Label(text="Рабочий день на эту дату существует.\n Переписать?",
-                    font_size=30, size_hint=(1, .3),pos_hint={'x': .001, 'top': 1},
-                    halign='center')
-        container.add_widget(lab)
-        btn_ok = Button(text="Ok", size_hint=(.3,.3),
-                       pos_hint={'x': .15, 'y': .1},
-                       on_press=self.choice_button)
-        container.add_widget(btn_ok)
-        btn_cancel = Button(text="Cancel", size_hint=(.3,.3),
-                       pos_hint={'x': .55, 'y': .1},
-                       on_press=self.choice_button)
-        container.add_widget(btn_cancel)
-        self.content = container # Расположить на Popup
-        self.open() # Запустить Poput
-
-    def choice_button(self,instance):
-        if instance.text == "Ok":
-            Pages().overwriting()
-            self.dismiss()
-        elif instance.text == "Cancel":
-            self.dismiss()
-
-
-
-
-
 class Pages(Carousel):
     """Читай переменные. Их имена обо всём говорят."""
-    answer_to_my_poput = None
 
     hours_start_work = StringProperty("00")
     minutes_start_work = StringProperty("00")
+
 
     hours_end_work = StringProperty("00")
     minutes_end_work = StringProperty("00")
@@ -93,11 +57,9 @@ class Pages(Carousel):
 
     label_statistic = ObjectProperty()
 
-    key_dict_total_data = []
-    file_dict = {"10 Январь":"8,15","11 Январь":"5,17","12 Январь":"3,55"}
-
-    total_time_work = []
-
+    key_dict_total_data = CURRENT_DAY + " " + CURRENT_MONTH
+    total_time_work = ""
+    file_dict = {}
 
     def create_start_work_time(self,spinner):
         match spinner.uid:
@@ -135,6 +97,7 @@ class Pages(Carousel):
         with open("data_base.dat", 'wb') as files:
             pickle.dump(self.file_dict, files)
         self.label_statistic.text = "def read_file_time_work"
+        print("Сохранено")
 
     def read_file_time_work(self):
         with open("data_base.dat", 'rb') as f:
@@ -172,9 +135,8 @@ class Pages(Carousel):
             self.total_hours_work = str(total_time_work)[0]
 
         self.total_minutes_work = str(total_time_work)[-5:-3]
-        self.total_time_work.clear()
-        self.total_time_work.append(self.total_hours_work)
-        self.total_time_work.append(self.total_minutes_work)
+        self.total_time_work = self.total_hours_work + ":" + self.total_minutes_work
+
 
     def create_a_date_for_label(self):
         """Формируется ключ для словаря
@@ -184,23 +146,56 @@ class Pages(Carousel):
         month = self.ids['month'].text
         self.label_month_lst_property.append(day)
         self.label_month_lst_property.append(month)
-        self.key_dict_total_data.clear()
-        self.key_dict_total_data.append(day)
-        self.key_dict_total_data.append(month)
-        print("key_dict_total_data=",self.key_dict_total_data)
+        self.key_dict_total_data = day + " " + month
+
 
     def validate_file_time_work(self):
-        print(self.key_dict_total_data)
-        data = " ".join(self.key_dict_total_data)
+        data = self.key_dict_total_data
+        time_work = self.total_time_work
         if data in self.file_dict:
-            My_Pop()
+            self.mypoput()
+        else:
+            self.file_dict[data] = time_work
+        self.write_file_time_work()
+
+
 
     def overwriting(self):
-        data = " ".join(self.key_dict_total_data)
-        print("data",data)
-        self.file_dict[data] = self.total_time_work
-        print(self.key_dict_total_data)
-        print(self.file_dict)
+        data = self.key_dict_total_data
+        time_work = self.total_time_work
+        self.file_dict[data] = time_work
+
+
+
+    def mypoput(self):
+        def answer_ok(instance):
+            print(instance.uid)
+            if instance.text == "Ok":
+                self.overwriting()
+                mynepopup.dismiss()
+            elif instance.text == "Cancel":
+                mynepopup.dismiss()
+        mynepopup = Popup(title = "Info",size_hint = (.8, .4))
+        container = FloatLayout(size_hint=(1, 1))
+        lab = Label(text="Рабочий день на эту дату существует.\n Переписать?",
+                    font_size=30, size_hint=(1, .3), pos_hint={'x': .001, 'top': 1},
+                    halign='center')
+        container.add_widget(lab)
+        btn_ok = Button(text="Ok", size_hint=(.3, .3),
+                        pos_hint={'x': .15, 'y': .1})
+        btn_ok.bind(on_press=answer_ok)
+        container.add_widget(btn_ok)
+        btn_cancel = Button(text="Cancel", size_hint=(.3, .3),
+                            pos_hint={'x': .55, 'y': .1})
+        btn_cancel.bind(on_press=answer_ok)
+        container.add_widget(btn_cancel)
+        mynepopup.content = container
+        mynepopup.open()  # Запустить Poput
+
+
+
+
+
 
 
 
