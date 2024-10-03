@@ -24,11 +24,17 @@ month_lst = ['Январь', 'Февраля', 'Марта', 'Апреля','М�
 
 time_now = time.time() # Секунды с начала эпохи
 time_day = time.localtime(time_now) # Текущее число
-CURRENT_DAY = time.strftime("%d", time_day)
+
+if time.strftime("%d", time_day)[0] == "0":
+    CURRENT_DAY = time.strftime("%d", time_day)[1]
+
 number_month = int(time.strftime("%m", time_day))
 CURRENT_MONTH = month_lst[number_month - 1]
 CURRENT_HOURS = time.strftime("%H", time_day)
 CURRENT_MINUTES = time.strftime("%M", time_day)
+
+# if not os.path.isfile("data_base.dat"):  # создание на HDD файла, если нету
+        #     with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
 
 class Pages(Carousel):
     """Читай переменные. Их имена обо всём говорят."""
@@ -56,10 +62,15 @@ class Pages(Carousel):
     label_month_lst_property = ListProperty([CURRENT_DAY, CURRENT_MONTH])  # Устан.даты в Label
 
     label_statistic = ObjectProperty()
-
     key_dict_total_data = CURRENT_DAY + " " + CURRENT_MONTH
-    total_time_work = ""
-    file_dict = {}
+    value_dict_total_time_work = ""
+
+    def __init__(self, **kwargs):
+        super(Pages, self).__init__(**kwargs)
+        self.file_dict = self.load_file_time_work()
+
+
+
 
     def create_start_work_time(self,spinner):
         match spinner.uid:
@@ -94,21 +105,27 @@ class Pages(Carousel):
         self.work_time_calc(tuple_time)
 
     def write_file_time_work(self):
+        print("До with")
         with open("data_base.dat", 'wb') as files:
             pickle.dump(self.file_dict, files)
+            print("В with")
+        print("После with")
         self.label_statistic.text = "def read_file_time_work"
         print("Сохранено")
 
-    def read_file_time_work(self):
-        with open("data_base.dat", 'rb') as f:
-            file = pickle.load(f)
-            print(file)
-        self.label_statistic.text = "def read_file_time_work"
+    def load_file_time_work(self):
+        try:
+            with open("data_base.dat", 'rb') as f:
+                self.file_dict = pickle.load(f)
+        except (IOError,EOFError):
+            with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
+        return {}
+
 
     def work_time_calc(self,args):
         """" В ф-ции расчитывается время отработки и
         формируется список значений для словаря.
-        ['2', '06'] часы, минуты"""
+        "4:33" часы, минуты"""
         Hour_start_work = int(args[0])
         Min_start_work = int(args[1])
 
@@ -128,15 +145,13 @@ class Pages(Carousel):
         time_start_work = timedelta(hours=Hour_start_work,minutes=Min_start_work)
         time_end_work = timedelta(hours=Hour_end_work,minutes=Min_end_work)
         total_time_work = (time_end_work - time_start_work) - total_time_lunch
-
+        print(total_time_work)
         if len(str(total_time_work)) == 8:
             self.total_hours_work = str(total_time_work)[:2]
         else:
             self.total_hours_work = str(total_time_work)[0]
-
         self.total_minutes_work = str(total_time_work)[-5:-3]
-        self.total_time_work = self.total_hours_work + ":" + self.total_minutes_work
-
+        self.value_dict_total_time_work = self.total_hours_work + ":" + self.total_minutes_work
 
     def create_a_date_for_label(self):
         """Формируется ключ для словаря
@@ -148,28 +163,23 @@ class Pages(Carousel):
         self.label_month_lst_property.append(month)
         self.key_dict_total_data = day + " " + month
 
-
     def validate_file_time_work(self):
         data = self.key_dict_total_data
-        time_work = self.total_time_work
+        time_work = self.value_dict_total_time_work
         if data in self.file_dict:
             self.mypoput()
         else:
             self.file_dict[data] = time_work
-        self.write_file_time_work()
-
-
+            self.write_file_time_work()
 
     def overwriting(self):
         data = self.key_dict_total_data
-        time_work = self.total_time_work
+        time_work = self.value_dict_total_time_work
         self.file_dict[data] = time_work
-
-
+        self.write_file_time_work()
 
     def mypoput(self):
         def answer_ok(instance):
-            print(instance.uid)
             if instance.text == "Ok":
                 self.overwriting()
                 mynepopup.dismiss()
@@ -202,13 +212,14 @@ class Pages(Carousel):
 
 
 
+
+
 class MyApp(App):
     def build(self):
         return Pages()
     def on_start(self):
-        if not os.path.isfile("data_base.dat"):  # создание на HDD файла, если нету
-            with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
-        # My_Pop()
+        pass
+
     def quit_program(self):
         exit()
 
