@@ -6,6 +6,7 @@ import pickle
 
 import kivy
 from kivy.app import App
+from kivy.config import value
 from kivy.uix.popup import Popup
 from kivy.uix.carousel import Carousel
 from kivy.uix.label import Label
@@ -56,7 +57,7 @@ class My_Pop(Popup):
 
     def choice_button(self,instance):
         if instance.text == "Ok":
-            Pages().func()
+            Pages().overwriting()
             self.dismiss()
         elif instance.text == "Cancel":
             self.dismiss()
@@ -92,8 +93,10 @@ class Pages(Carousel):
 
     label_statistic = ObjectProperty()
 
+    key_dict_total_data = []
     file_dict = {"10 Январь":"8,15","11 Январь":"5,17","12 Январь":"3,55"}
-    key_dict_total_data = ''
+
+    total_time_work = []
 
 
     def create_start_work_time(self,spinner):
@@ -140,6 +143,9 @@ class Pages(Carousel):
         self.label_statistic.text = "def read_file_time_work"
 
     def work_time_calc(self,args):
+        """" В ф-ции расчитывается время отработки и
+        формируется список значений для словаря.
+        ['2', '06'] часы, минуты"""
         Hour_start_work = int(args[0])
         Min_start_work = int(args[1])
 
@@ -164,27 +170,37 @@ class Pages(Carousel):
             self.total_hours_work = str(total_time_work)[:2]
         else:
             self.total_hours_work = str(total_time_work)[0]
+
         self.total_minutes_work = str(total_time_work)[-5:-3]
+        self.total_time_work.clear()
+        self.total_time_work.append(self.total_hours_work)
+        self.total_time_work.append(self.total_minutes_work)
 
     def create_a_date_for_label(self):
+        """Формируется ключ для словаря
+        key_dict_total_data = "10 Января" """
         self.label_month_lst_property.clear()
         day = self.ids['day'].text
         month = self.ids['month'].text
         self.label_month_lst_property.append(day)
         self.label_month_lst_property.append(month)
-        self.key_dict_total_data = self.ids['day'].text + " " + self.ids['month'].text
+        self.key_dict_total_data.clear()
+        self.key_dict_total_data.append(day)
+        self.key_dict_total_data.append(month)
+        print("key_dict_total_data=",self.key_dict_total_data)
 
-    def validate_file_time_work(self,value=None):
+    def validate_file_time_work(self):
         print(self.key_dict_total_data)
-        if self.key_dict_total_data in self.file_dict:
+        data = " ".join(self.key_dict_total_data)
+        if data in self.file_dict:
             My_Pop()
 
-
-
-
-    def func(self):
-        print("Ответ от Poput")
-        return True
+    def overwriting(self):
+        data = " ".join(self.key_dict_total_data)
+        print("data",data)
+        self.file_dict[data] = self.total_time_work
+        print(self.key_dict_total_data)
+        print(self.file_dict)
 
 
 
