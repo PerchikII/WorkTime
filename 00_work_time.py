@@ -31,13 +31,13 @@ CURRENT_HOURS = time.strftime("%H", time_day)
 CURRENT_MINUTES = time.strftime("%M", time_day)
 
 class My_Pop(Popup):
-    answer = False
+
     def __init__(self, **kwargs):
         super(My_Pop, self).__init__(**kwargs)
 
         self.title = "Info"
         self.size_hint = (.8,.4)
-        self.auto_dismiss = True # Выключить Popup на люб.месте вне экрана
+        self.auto_dismiss = False # Выключить Popup на люб.месте вне экрана
         container = FloatLayout(size_hint=(1, 1))
         lab = Label(text="Рабочий день на эту дату существует.\n Переписать?",
                     font_size=30, size_hint=(1, .3),pos_hint={'x': .001, 'top': 1},
@@ -52,19 +52,22 @@ class My_Pop(Popup):
                        on_press=self.choice_button)
         container.add_widget(btn_cancel)
         self.content = container # Расположить на Popup
-        self.open()
+        self.open() # Запустить Poput
+
     def choice_button(self,instance):
         if instance.text == "Ok":
-            self.answer = True
-        else:
-            self.answer = False
-        print(self.answer)
+            Pages().func()
+            self.dismiss()
+        elif instance.text == "Cancel":
+            self.dismiss()
+
+
 
 
 
 class Pages(Carousel):
     """Читай переменные. Их имена обо всём говорят."""
-
+    answer_to_my_poput = None
 
     hours_start_work = StringProperty("00")
     minutes_start_work = StringProperty("00")
@@ -171,13 +174,22 @@ class Pages(Carousel):
         self.label_month_lst_property.append(month)
         self.key_dict_total_data = self.ids['day'].text + " " + self.ids['month'].text
 
-    def validate_file_time_work(self):
+    def validate_file_time_work(self,value=None):
         print(self.key_dict_total_data)
         if self.key_dict_total_data in self.file_dict:
-            answer = My_Pop().btn_ok
-            print('Такой ключ существует')
-        else:
-            print("Нету")
+            My_Pop()
+
+
+
+
+    def func(self):
+        print("Ответ от Poput")
+        return True
+
+
+
+
+
 
 class MyApp(App):
     def build(self):
@@ -185,7 +197,7 @@ class MyApp(App):
     def on_start(self):
         if not os.path.isfile("data_base.dat"):  # создание на HDD файла, если нету
             with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
-        My_Pop()
+        # My_Pop()
     def quit_program(self):
         exit()
 
