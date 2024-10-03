@@ -4,8 +4,7 @@
     font_size: 30
 
 <Pages>:
-    start_workH: startworkhour
-    start_workM: startworkminute
+
     BoxLayout:
         id: major_box
         orientation: "vertical"
@@ -24,7 +23,7 @@
                     font_size: 50
                     text: root.day_spinner_str
                     values: map(str,list(range(1,32)))
-                    on_text: root.create_date()
+                    on_text: root.create_a_date_for_label()
 
                 Spinner:
                     id: month
@@ -33,7 +32,7 @@
                     font_size: 40
                     text: root.month_spinner_str
                     values: map(str,root.month_lst_property)
-                    on_text: root.create_date()
+                    on_text: root.create_a_date_for_label()
                     spacing: 100
             BoxLayout:
                 id: box_time
@@ -215,11 +214,12 @@
             size_hint:1,.045
             padding:20
             Button:
+                id: btn_save_file
                 size_hint:1,1
                 pos_hint:{'center_x':.5,"top":1}
                 text: "Сохранить"
                 font_size: 30
-                on_press: root.load_next()
+                on_press: root.validate_file_time_work()#;root.load_next()
             Button:
                 size_hint:1,1
                 pos_hint:{'center_x':.5,"top":1}
@@ -228,9 +228,14 @@
                 on_press: app.quit_program()
 
 <Pages>:
+    label_statistic:show_statistic
     FloatLayout:
         size:root.size
         Label:
-            text: "Привет болван"
+            id: show_statistic
+            text: 'label_statistic'
             font_size: 50
+
+
+
 
