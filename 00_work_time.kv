@@ -249,7 +249,7 @@
                     id: from_total_days
                     size_hint: .1, .2
                     text: '1'
-                    values: map(str,list(range(1,32)))
+                    values: root.list_from_total_days
                     on_text: root.create_statistic_date(self)
 
                 TimeSpinner:
@@ -264,7 +264,7 @@
                     id: to_total_days
                     size_hint: .1, .2
                     text: root.to_total_days_spinner
-                    values: map(str,list(range(1,32)))
+                    values: root.list_to_total_days
                     on_text: root.create_statistic_date(self)
 
                 TimeSpinner:

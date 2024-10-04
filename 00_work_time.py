@@ -59,8 +59,11 @@ class Pages(Carousel):
 
     from_total_days_spinner = StringProperty("1") ##########################################
     from_total_month_spinner = StringProperty(CURRENT_MONTH) ##########################################
-    to_total_days_spinner = StringProperty("last data")
-    to_total_month_spinner = StringProperty()
+    to_total_days_spinner = StringProperty("")
+    to_total_month_spinner = StringProperty(CURRENT_MONTH)
+    list_from_total_days = ListProperty()
+    list_to_total_days = ListProperty()
+
 
     lab_save_txt = StringProperty("Отработано:")
 
@@ -74,25 +77,18 @@ class Pages(Carousel):
     key_dict_total_data = CURRENT_DAY + " " + CURRENT_MONTH
     value_dict_total_time_work = ""
 
-
+    # FileNotFoundError;
     def __init__(self, **kwargs):
         super(Pages, self).__init__(**kwargs)
 
         self.list_file_dict_keys = []
-        self.load_slide(self.next_slide)
+
+        self.load_slide(self.next_slide) ######### следущий Pages
 
         self.file_dict = self.load_file_time_work()
+        self.sort_file_dict(self.file_dict)
 
-    def create_statistic_date(self,spinner):
-        match spinner.uid:
-            case 3589:
-                self.from_total_days_spinner = spinner.text
-            case 3625:
-                self.from_total_month_spinner = spinner.text
-            case 3663:
-                self.to_total_days_spinner = spinner.text
-            case 3699:
-                self.to_total_month_spinner = spinner.text
+
 
 
 
@@ -116,7 +112,24 @@ class Pages(Carousel):
             keys_dict_sort.append(str(lst_sorted_days[i])+" "+ get_month) # создание строки ключа словаря и запись в список
         for i in range(len(keys_dict_sort)): # проход по длине списка отсортированных ключей
             print(file[keys_dict_sort[i]]) # Получение значений ключей со словаря
-        self.to_total_days_spinner = lst_sorted_days[-1]
+        last_day = lst_sorted_days[-1]
+        self.install_last_day(last_day)
+
+    def install_last_day(self,last_day):
+        lst = list(map(str,list(range(1, int(last_day)+1))))
+        self.list_to_total_days = lst
+        self.to_total_days_spinner = lst[0]
+        print(self.list_to_total_days)
+    def create_statistic_date(self,spinner):
+        match spinner.uid:
+            case 3589:
+                self.from_total_days_spinner = spinner.text
+            case 3625:
+                self.from_total_month_spinner = spinner.text
+            case 3663:
+                self.to_total_days_spinner = spinner.text
+            case 3699:
+                self.to_total_month_spinner = spinner.text
 
     def create_start_work_time(self,spinner):
         match spinner.uid:
@@ -168,11 +181,11 @@ class Pages(Carousel):
                 self.file_dict = pickle.load(file)
                 print("Открыт успешно",self.file_dict)
                 print("============================")
-
         except (IOError,EOFError):
             print("Не открылся. Создался пустой")
             with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
             self.file_dict = {}
+            print(self.file_dict)
         return self.file_dict
 
     def work_time_calc(self,args):
