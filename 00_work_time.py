@@ -65,14 +65,19 @@ class Pages(Carousel):
     month_lst_property = ListProperty(month_lst)  # Устан.всех месяцев в Spinner
     label_month_lst_property = ListProperty([CURRENT_DAY, CURRENT_MONTH])  # Устан.даты в Label
 
-    label_statistic = ObjectProperty()
+    #label_statistic = ObjectProperty()
     key_dict_total_data = CURRENT_DAY + " " + CURRENT_MONTH
     value_dict_total_time_work = ""
 
+
     def __init__(self, **kwargs):
         super(Pages, self).__init__(**kwargs)
+        self.load_slide(self.next_slide)
 
         self.file_dict = self.load_file_time_work()
+
+    def create(self,spinner):
+        print("Работает")
 
     def create_start_work_time(self,spinner):
         match spinner.uid:
@@ -105,6 +110,7 @@ class Pages(Carousel):
                     self.minutes_end_work, self.hours_start_lunch, self.minutes_start_lunch,
                     self.hours_end_lunch, self.minutes_end_lunch)
         self.work_time_calc(tuple_time)
+
     def my_callback(self,instance):
         self.lab_save_txt = "Отработано:"
         return False
@@ -112,7 +118,6 @@ class Pages(Carousel):
     def write_file_time_work(self):
         with open("data_base.dat", 'wb') as files:
             pickle.dump(self.file_dict, files)
-        self.label_statistic.text = "def read_file_time_work"
         Clock.schedule_once(self.my_callback, 2)
         self.lab_save_txt = "Сохранено"
         print("Сохранено")

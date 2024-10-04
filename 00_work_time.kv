@@ -228,13 +228,75 @@
                 on_press: app.quit_program()
 
 <Pages>:
-    label_statistic:show_statistic
-    FloatLayout:
+
+    BoxLayout:
+        orientation: "vertical"
         size:root.size
-        Label:
-            id: show_statistic
-            text: 'label_statistic'
-            font_size: 50
+        BoxLayout:
+            size_hint: 1, .2
+            Label:
+                text: 'Отработано за период\n с:                       по:'
+                font_size: 50
+                size_hint: 1, 1
+                text_size:self.size
+                halign:"center"
+        BoxLayout:
+            padding: 10
+            spacing: 20
+            size_hint: 1, .4
+            BoxLayout:
+                TimeSpinner:
+                    id: from_total_days
+                    size_hint: .1, .2
+                    text: root.day_spinner_str
+                    values: map(str,list(range(1,32)))
+                    on_text: root.create(self)
+
+                TimeSpinner:
+                    id: from_total_month
+                    size_hint: .4, .2
+                    text: root.month_spinner_str
+                    values: map(str,root.month_lst_property)
+                    on_text: root.create_a_date_for_label()
+            BoxLayout:
+
+                TimeSpinner:
+                    id: to_total_days
+                    size_hint: .1, .2
+                    text: root.day_spinner_str
+                    values: map(str,list(range(25)))
+                    on_text: root.create(self)
+
+                TimeSpinner:
+                    id: to_total_month
+                    size_hint: .4, .2
+                    text: root.month_spinner_str
+                    values: map(str,root.month_lst_property)
+                    on_text: root.create_a_date_for_label()
+        BoxLayout:
+            size_hint: 1,.1
+            Label:
+                text: "Часов"
+                font_size: 50
+                size_hint: 1, .1
+
+            Label:
+                text: "Минут"
+                font_size: 50
+                size_hint: 1, .1
+
+        BoxLayout:
+            size_hint: 1,.2
+            Label:
+                text: "100"
+                font_size: 50
+                size_hint: 1, .1
+            Label:
+                text: "100"
+                font_size: 50
+                size_hint: 1, .1
+        BoxLayout:
+            size_hint: 1,.4
 
 
 
