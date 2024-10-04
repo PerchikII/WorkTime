@@ -13,6 +13,8 @@ from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.lang.builder import Builder
 from kivy.properties import ListProperty,StringProperty,ObjectProperty
+from kivy.clock import Clock
+
 
 
 """Установить kv файл в директорию совместно в main.py"""
@@ -55,6 +57,8 @@ class Pages(Carousel):
     total_hours_work = StringProperty("00")
     total_minutes_work = StringProperty("00")
 
+    lab_save_txt = StringProperty("Отработано:")
+
     day_spinner_str = StringProperty(CURRENT_DAY)
     month_spinner_str = StringProperty(CURRENT_MONTH)
 
@@ -67,10 +71,8 @@ class Pages(Carousel):
 
     def __init__(self, **kwargs):
         super(Pages, self).__init__(**kwargs)
+
         self.file_dict = self.load_file_time_work()
-
-
-
 
     def create_start_work_time(self,spinner):
         match spinner.uid:
@@ -98,33 +100,40 @@ class Pages(Carousel):
             case  419:
                 self.minutes_end_lunch = spinner.text
                 #print(spinner.uid, self.minutes_end_lunch)
+
         tuple_time = (self.hours_start_work, self.minutes_start_work, self.hours_end_work,
                     self.minutes_end_work, self.hours_start_lunch, self.minutes_start_lunch,
                     self.hours_end_lunch, self.minutes_end_lunch)
-
         self.work_time_calc(tuple_time)
+    def my_callback(self,instance):
+        self.lab_save_txt = "Отработано:"
+        return False
 
     def write_file_time_work(self):
-        print("До with")
         with open("data_base.dat", 'wb') as files:
             pickle.dump(self.file_dict, files)
-            print("В with")
-        print("После with")
         self.label_statistic.text = "def read_file_time_work"
+        Clock.schedule_once(self.my_callback, 2)
+        self.lab_save_txt = "Сохранено"
         print("Сохранено")
+        print(self.file_dict)
 
     def load_file_time_work(self):
         try:
-            with open("data_base.dat", 'rb') as f:
-                self.file_dict = pickle.load(f)
+            with open("data_base.dat", 'rb') as file:
+                self.file_dict = pickle.load(file)
+                file.close()
+                print("Открыт успешно")
+                print(self.file_dict)
         except (IOError,EOFError):
+            print("Не открылся. Создался пустой")
             with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
-        return {}
-
+            self.file_dict = {}
+        return self.file_dict
 
     def work_time_calc(self,args):
         """" В ф-ции расчитывается время отработки и
-        формируется список значений для словаря.
+        формируется строка значений для словаря.
         "4:33" часы, минуты"""
         Hour_start_work = int(args[0])
         Min_start_work = int(args[1])
@@ -145,12 +154,12 @@ class Pages(Carousel):
         time_start_work = timedelta(hours=Hour_start_work,minutes=Min_start_work)
         time_end_work = timedelta(hours=Hour_end_work,minutes=Min_end_work)
         total_time_work = (time_end_work - time_start_work) - total_time_lunch
-        print(total_time_work)
         if len(str(total_time_work)) == 8:
             self.total_hours_work = str(total_time_work)[:2]
         else:
             self.total_hours_work = str(total_time_work)[0]
         self.total_minutes_work = str(total_time_work)[-5:-3]
+
         self.value_dict_total_time_work = self.total_hours_work + ":" + self.total_minutes_work
 
     def create_a_date_for_label(self):
@@ -167,7 +176,7 @@ class Pages(Carousel):
         data = self.key_dict_total_data
         time_work = self.value_dict_total_time_work
         if data in self.file_dict:
-            self.mypoput()
+            self.write_or_cancel_poput()
         else:
             self.file_dict[data] = time_work
             self.write_file_time_work()
@@ -178,7 +187,7 @@ class Pages(Carousel):
         self.file_dict[data] = time_work
         self.write_file_time_work()
 
-    def mypoput(self):
+    def write_or_cancel_poput(self):
         def answer_ok(instance):
             if instance.text == "Ok":
                 self.overwriting()
@@ -201,6 +210,7 @@ class Pages(Carousel):
         container.add_widget(btn_cancel)
         mynepopup.content = container
         mynepopup.open()  # Запустить Poput
+        return
 
 
 
@@ -217,8 +227,6 @@ class Pages(Carousel):
 class MyApp(App):
     def build(self):
         return Pages()
-    def on_start(self):
-        pass
 
     def quit_program(self):
         exit()
