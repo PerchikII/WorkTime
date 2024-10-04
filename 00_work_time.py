@@ -57,6 +57,11 @@ class Pages(Carousel):
     total_hours_work = StringProperty("00")
     total_minutes_work = StringProperty("00")
 
+    from_total_days_spinner = StringProperty("1") ##########################################
+    from_total_month_spinner = StringProperty(CURRENT_MONTH) ##########################################
+    to_total_days_spinner = StringProperty("last data")
+    to_total_month_spinner = StringProperty()
+
     lab_save_txt = StringProperty("Отработано:")
 
     day_spinner_str = StringProperty(CURRENT_DAY)
@@ -72,12 +77,46 @@ class Pages(Carousel):
 
     def __init__(self, **kwargs):
         super(Pages, self).__init__(**kwargs)
+
+        self.list_file_dict_keys = []
         self.load_slide(self.next_slide)
 
         self.file_dict = self.load_file_time_work()
 
-    def create(self,spinner):
-        print("Работает")
+    def create_statistic_date(self,spinner):
+        match spinner.uid:
+            case 3589:
+                self.from_total_days_spinner = spinner.text
+            case 3625:
+                self.from_total_month_spinner = spinner.text
+            case 3663:
+                self.to_total_days_spinner = spinner.text
+            case 3699:
+                self.to_total_month_spinner = spinner.text
+
+
+
+
+
+    def sort_file_dict(self,file):
+        get_index_month = month_lst.index(CURRENT_MONTH) # Получаем индекс текущего месяца
+        get_month = month_lst[get_index_month] # Получаем нужный месяц для сортировки
+        get_list_month = [] # Только даты с нужным месяцем
+        lst_sorted_days = []
+        keys_dict_sort = []
+        for i in file: # Получаем в i ключи словаря
+            if i.split()[1] == get_month: # Определяем нужный месяц из списка. Вычленяем название месаца
+                get_list_month.append(i) # Записываем в список только даты с нужным месяцем
+        print("Список дат нужного месяца:\n",get_list_month)
+        for i in get_list_month: # Идём по списку месяцев
+            num_day = int(i.split()[0]) # Вычленяя только дату оборачивая в int()
+            lst_sorted_days.append(num_day) # Записываем даты в список
+        lst_sorted_days.sort() # Сортировка списка дат
+        for i in range(len(lst_sorted_days)): # Проход по длинне списка дат
+            keys_dict_sort.append(str(lst_sorted_days[i])+" "+ get_month) # создание строки ключа словаря и запись в список
+        for i in range(len(keys_dict_sort)): # проход по длине списка отсортированных ключей
+            print(file[keys_dict_sort[i]]) # Получение значений ключей со словаря
+        self.to_total_days_spinner = lst_sorted_days[-1]
 
     def create_start_work_time(self,spinner):
         match spinner.uid:
@@ -127,9 +166,9 @@ class Pages(Carousel):
         try:
             with open("data_base.dat", 'rb') as file:
                 self.file_dict = pickle.load(file)
-                file.close()
-                print("Открыт успешно")
-                print(self.file_dict)
+                print("Открыт успешно",self.file_dict)
+                print("============================")
+
         except (IOError,EOFError):
             print("Не открылся. Создался пустой")
             with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass

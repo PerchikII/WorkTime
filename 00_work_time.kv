@@ -248,31 +248,31 @@
                 TimeSpinner:
                     id: from_total_days
                     size_hint: .1, .2
-                    text: root.day_spinner_str
+                    text: '1'
                     values: map(str,list(range(1,32)))
-                    on_text: root.create(self)
+                    on_text: root.create_statistic_date(self)
 
                 TimeSpinner:
                     id: from_total_month
                     size_hint: .4, .2
-                    text: root.month_spinner_str
+                    text: root.from_total_month_spinner
                     values: map(str,root.month_lst_property)
-                    on_text: root.create_a_date_for_label()
+                    on_text: root.create_statistic_date(self)
             BoxLayout:
 
                 TimeSpinner:
                     id: to_total_days
                     size_hint: .1, .2
-                    text: root.day_spinner_str
-                    values: map(str,list(range(25)))
-                    on_text: root.create(self)
+                    text: root.to_total_days_spinner
+                    values: map(str,list(range(1,32)))
+                    on_text: root.create_statistic_date(self)
 
                 TimeSpinner:
                     id: to_total_month
                     size_hint: .4, .2
                     text: root.month_spinner_str
                     values: map(str,root.month_lst_property)
-                    on_text: root.create_a_date_for_label()
+                    on_text: root.create_statistic_date(self)
         BoxLayout:
             size_hint: 1,.1
             Label:
