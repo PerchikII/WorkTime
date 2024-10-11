@@ -4,16 +4,12 @@
     font_size: 30
 
 <Pages>:
-
     BoxLayout:
-        id: major_box
         orientation: "vertical"
         size: root.size
         BoxLayout:
-            id: box_date_time_root
             size_hint: 1, .1
             BoxLayout:
-                id: box_data
                 spacing:10
                 padding: [20,10,20,0]
                 Spinner:
@@ -31,23 +27,21 @@
                     size_hint: 1, 1
                     font_size: 40
                     text: root.month_spinner_str
-                    values: map(str,root.month_lst_property)
+                    values: root.spinner_month_lst
                     on_text: root.create_a_date_for_label()
-                    spacing: 100
+
             BoxLayout:
-                id: box_time
                 orientation: "vertical"
                 padding:[20,10,20,0]
                 Label:
-                    id: label_time
                     size_hint: 1, 1
                     font_size: 25
                     text: "установите НАЧАЛО\n      рабочего дня"
+                    color: 0,0,0
                 BoxLayout:
-                    id: box_time_start_work
                     TimeSpinner:
                         id: startworkhour
-                        text: root.hours_start_work
+                        text: "00" #root.hours_start_work
                         values: map(str,list(range(25)))
                         on_text: root.create_start_work_time(self)
                     Label:
@@ -55,6 +49,7 @@
                         pos_hint: {"right":1,"bottom":1}
                         font_size: 50
                         text: ":"
+                        color: 0,0,0
 
                     TimeSpinner:
                         id: startworkminute
@@ -77,6 +72,7 @@
                     font_size: 25
                     pos_hint: {"top":1}
                     text: "установите НАЧАЛО ОБЕДА"
+                    color: 0,0,0
                 BoxLayout:
                     TimeSpinner:
                         id: hourstartlunch
@@ -89,6 +85,7 @@
                         pos_hint: {"right":1,"top":1}
                         font_size: 50
                         text: ":"
+                        color: 0,0,0
 
                     TimeSpinner:
                         id: minutestartlunch
@@ -102,10 +99,10 @@
                 padding:[20,10,20,0]
                 size_hint: 1,1
                 Label:
-                    id: hoursendwork
                     size_hint: 1, 1
                     font_size: 25
                     text: "установите КОНЕЦ\n      рабочего дня"
+                    color: 0,0,0
                 BoxLayout:
                     TimeSpinner:
                         id: hourendwork
@@ -118,6 +115,7 @@
                         pos_hint: {"right":1,"top":1}
                         font_size: 50
                         text: ":"
+                        color: 0,0,0
 
 
 
@@ -128,10 +126,8 @@
                         on_text: root.create_start_work_time(self)
 
         BoxLayout:
-            id: box_something_root
             size_hint: 1,.1
             BoxLayout:
-                id: box_time_lunch
                 orientation: "vertical"
                 padding:[20,10,20,0]
                 Label:
@@ -139,9 +135,10 @@
                     size_hint: 1, 1
                     font_size: 25
                     text: "установите КОНЕЦ ОБЕДА"
+                    color: 0,0,0
                 BoxLayout:
                     TimeSpinner:
-                        id: hoursendlanch
+                        id: hoursendlunch
                         text: root.hours_end_lunch
                         values: map(str,list(range(25)))
                         on_text: root.create_start_work_time(self)
@@ -151,7 +148,7 @@
                         pos_hint: {"right":1,"bottom":1}
                         font_size: 50
                         text: ":"
-                        values: map(str,list(range(25)))
+                        color: 0,0,0
 
 
                     TimeSpinner:
@@ -168,7 +165,8 @@
                 halign: "center"
                 size_hint:1,1
                 pos_hint:{'center_x':.5,"top":1}
-                text: "На дату:\n"+' '.join(root.label_month_lst_property)
+                text: "На дату:\n"+' '.join(root.label_month_lst)
+                color: 0,0,0
                 font_size: 30
         BoxLayout:
             padding:[20,0,20,0]
@@ -180,14 +178,15 @@
                 valign: "center"
                 halign: "left"
                 font_size: 50
+                color: 0,0,0
             Label:
-                id:total_work_hours_int
                 size_hint:.2,1
                 text_size: self.size
                 valign: "center"
                 halign: "center"
                 text: root.total_hours_work
                 font_size: 50
+                color: 0,0,0
             Label:
                 size_hint:.2,1
                 text_size: self.size
@@ -195,14 +194,15 @@
                 halign: "center"
                 text: "Часов"
                 font_size: 30
+                color: 0,0,0
             Label:
-                id:total_work_minutes_int
                 size_hint:.2,1
                 text_size: self.size
                 valign: "center"
                 halign: "center"
                 text: root.total_minutes_work
                 font_size: 50
+                color: 0,0,0
             Label:
                 size_hint:.2,1
                 text_size: self.size
@@ -210,6 +210,7 @@
                 halign: "center"
                 text: "Минут"
                 font_size: 30
+                color: 0,0,0
         BoxLayout:
             size_hint:1,.045
             padding:20
@@ -228,75 +229,88 @@
                 on_press: app.quit_program()
 
 <Pages>:
-
     BoxLayout:
         orientation: "vertical"
         size:root.size
         BoxLayout:
-            size_hint: 1, .2
+            size_hint: 1, .1
             Label:
                 text: 'Отработано за период\n с:                       по:'
                 font_size: 50
                 size_hint: 1, 1
                 text_size:self.size
                 halign:"center"
+                color: 0,0,0
         BoxLayout:
             padding: 10
             spacing: 20
-            size_hint: 1, .4
+            size_hint: 1, .055
             BoxLayout:
                 TimeSpinner:
                     id: from_total_days
-                    size_hint: .1, .2
-                    text: '1'
-                    values: root.list_from_total_days
+                    size_hint: .1, 1
+                    text: "1"
+                    values: map(str,list(range(1,32)))
                     on_text: root.create_statistic_date(self)
 
                 TimeSpinner:
                     id: from_total_month
-                    size_hint: .4, .2
+                    size_hint: .4, 1
                     text: root.from_total_month_spinner
-                    values: map(str,root.month_lst_property)
+                    values: map(str,root.spinner_month_lst)
                     on_text: root.create_statistic_date(self)
             BoxLayout:
-
                 TimeSpinner:
                     id: to_total_days
-                    size_hint: .1, .2
+                    size_hint: .1, 1
                     text: root.to_total_days_spinner
                     values: root.list_to_total_days
                     on_text: root.create_statistic_date(self)
 
                 TimeSpinner:
                     id: to_total_month
-                    size_hint: .4, .2
+                    size_hint: .4, 1
                     text: root.month_spinner_str
-                    values: map(str,root.month_lst_property)
+                    values: map(str,root.spinner_statistic_month_lst)
                     on_text: root.create_statistic_date(self)
+        BoxLayout:
+            size_hint: 1,.055
+            Label:
+                text: "Часов"
+                text_size:self.size
+                halign:"center"
+                font_size: 50
+                size_hint: 1, 1
+                color: 0,0,0
+            Label:
+                text: "Минут"
+                text_size:self.size
+                halign:"center"
+                font_size: 50
+                size_hint: 1, 1
+                color: 0,0,0
+
         BoxLayout:
             size_hint: 1,.1
             Label:
-                text: "Часов"
+                text: "100"
+                text_size:self.size
+                halign:"center"
+                valign:"top"
                 font_size: 50
-                size_hint: 1, .1
-
+                size_hint: 1, 1
+                color: 0,0,0
             Label:
-                text: "Минут"
+                text: "100"
+                text_size:self.size
+                halign:"center"
+                valign:"top"
                 font_size: 50
-                size_hint: 1, .1
-
+                size_hint: 1, 1
+                color: 0,0,0
         BoxLayout:
             size_hint: 1,.2
-            Label:
-                text: "100"
-                font_size: 50
-                size_hint: 1, .1
-            Label:
-                text: "100"
-                font_size: 50
-                size_hint: 1, .1
-        BoxLayout:
-            size_hint: 1,.4
+
 
 
 
