@@ -31,7 +31,7 @@ month_lst = ['Январь', 'Февраля', 'Марта', 'Апреля','М�
 time_now = time.time() # Секунды с начала эпохи
 time_day = time.localtime(time_now) # Текущее число
 
-if time.strftime("%d", time_day) == "0":
+if time.strftime("%d", time_day)[0] == "0":
     CURRENT_DAY = time.strftime("%d", time_day)[1]
 else:
     CURRENT_DAY = time.strftime("%d", time_day)
