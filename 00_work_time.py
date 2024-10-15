@@ -42,12 +42,12 @@ CURRENT_HOURS = time.strftime("%H", time_day)
 CURRENT_MINUTES = time.strftime("%M", time_day)
 
 # if not os.path.isfile("data_base.dat"):  # создание на HDD файла, если нету
-        #     with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
+        # with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
 
 class Pages(Carousel):
     """Читай переменные. Их имена обо всём говорят."""
 
-    hours_start_work = ""
+    hours_start_work = "00"
     minutes_start_work = StringProperty("00")
 
     hours_end_work = StringProperty("00")
@@ -69,7 +69,7 @@ class Pages(Carousel):
     to_total_month_spinner = StringProperty(CURRENT_MONTH)
 
     list_from_total_days = ListProperty()
-    list_to_total_days = ListProperty()
+    list_to_total_days = ListProperty(["1","33"])
 
     lab_save_txt = StringProperty("Отработано:")
 
@@ -84,8 +84,6 @@ class Pages(Carousel):
 
     key_dict_total_data = CURRENT_DAY + " " + CURRENT_MONTH
 
-
-    # FileNotFoundError;
     def __init__(self, **kwargs):
         super(Pages, self).__init__(**kwargs)
 
@@ -102,6 +100,8 @@ class Pages(Carousel):
         self.update_statistic(self.file_dict, self.choice_month) # Обновление статистики
 
     def update_statistic(self,file_dict,month):pass
+        # """Здесь необходимо установить данные для статистики
+    # число 1-го рабочего дня текущего месяца и последний раб день"""
         
 
 
@@ -137,18 +137,20 @@ class Pages(Carousel):
         print(self.list_to_total_days)
 
     def create_statistic_date(self,spinner):
+        print(spinner.uid)
+
         match spinner.uid:
-            case 3589:
+            case 3557:
                 self.from_total_days_spinner = spinner.text
                 print(self.from_total_days_spinner)
-            case 3625:
+            case 3593:
                 self.from_total_month_spinner = spinner.text
                 print(self.from_total_month_spinner)
 
-            case 3663:
+            case 3631:
                 self.to_total_days_spinner = spinner.text
                 print(self.to_total_days_spinner)
-            case 3699:
+            case 3667:
                 self.to_total_month_spinner = spinner.text
                 print(self.to_total_month_spinner)
 
@@ -212,6 +214,7 @@ class Pages(Carousel):
 
     def work_time_calc(self,args):
         """" В ф-ции расчитывается время отработки """
+        print(args)
         Hour_start_work = int(args[0])
         Min_start_work = int(args[1])
 
@@ -311,7 +314,8 @@ class Pages(Carousel):
 
 class MyApp(App):
     def build(self):
-        Window.clearcolor = (1, 1, 1, 1)
+        self.title = "Паши дурачёк, получишь значёк"
+        Window.clearcolor = (.1, 1, 1, .1)
 
         return Pages()
 
