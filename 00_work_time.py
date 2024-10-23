@@ -47,17 +47,17 @@ CURRENT_MINUTES = time.strftime("%M", time_day)
 class Pages(Carousel):
     """Читай переменные. Их имена обо всём говорят."""
 
-    hours_start_work = "00"
-    minutes_start_work = "00"
+    hours_start_work = StringProperty("00")
+    minutes_start_work = StringProperty("00")
 
-    hours_end_work = "00"
-    minutes_end_work = "00"
+    hours_end_work = StringProperty("00")
+    minutes_end_work = StringProperty("00")
 
-    hours_start_lunch = "00"
-    minutes_start_lunch = "00"
+    hours_start_lunch = StringProperty("00")
+    minutes_start_lunch = StringProperty("00")
 
-    hours_end_lunch = "00"
-    minutes_end_lunch = "00"
+    hours_end_lunch = StringProperty("00")
+    minutes_end_lunch = StringProperty("00")
 
     total_hours_work = StringProperty("00")
     total_minutes_work = StringProperty("00")
