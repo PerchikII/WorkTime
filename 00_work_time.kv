@@ -285,7 +285,8 @@
         BoxLayout:
             size_hint: 1,.1
             Label:
-                text: "100"
+                id: tot_hours_statistic
+                text: root.total_hours_work_statistic
                 text_size:self.size
                 halign:"center"
                 valign:"top"
@@ -293,7 +294,8 @@
                 size_hint: 1, 1
                 color: 0,0,0
             Label:
-                text: "100"
+                id: tot_minutes_statistic
+                text: root.total_minutes_work_statistic
                 text_size:self.size
                 halign:"center"
                 valign:"top"
