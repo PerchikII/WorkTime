@@ -235,43 +235,35 @@
         BoxLayout:
             size_hint: 1, .1
             Label:
-                text: 'Отработано за период\n с:                       по:'
+                text: 'Отработано за период:'
                 font_size: 50
                 size_hint: 1, 1
                 text_size:self.size
                 halign:"center"
                 color: 0,0,0
         BoxLayout:
-            padding: 10
+            padding: [100,0,100,0]
             spacing: 20
             size_hint: 1, .055
             BoxLayout:
                 TimeSpinner:
                     id: from_total_days
                     size_hint: .1, 1
-                    text: "1"
-                    values: map(str,list(range(1,32)))
+                    text: root.from_total_days_spinner
+                    values: root.list_from_total_days
                     on_text: root.create_statistic_date(self)
 
                 TimeSpinner:
                     id: from_total_month
                     size_hint: .4, 1
                     text: root.from_total_month_spinner
-                    values: map(str,root.spinner_month_lst)
+                    values: root.spinner_month_statistic_lst
                     on_text: root.create_statistic_date(self)
-            BoxLayout:
                 TimeSpinner:
                     id: to_total_days
                     size_hint: .1, 1
-                    text: "32"
+                    text: root.to_total_days_spinner
                     values: root.list_to_total_days
-                    on_text: root.create_statistic_date(self)
-
-                TimeSpinner:
-                    id: to_total_month
-                    size_hint: .4, 1
-                    text: root.month_spinner_str
-                    values: map(str,root.spinner_statistic_month_lst)
                     on_text: root.create_statistic_date(self)
         BoxLayout:
             size_hint: 1,.055
