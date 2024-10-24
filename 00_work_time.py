@@ -1,5 +1,6 @@
 import time
 import os
+from calendar import month
 from datetime import timedelta
 import pickle
 
@@ -62,13 +63,12 @@ class Pages(Carousel):
     total_hours_work = StringProperty("00")
     total_minutes_work = StringProperty("00")
 
-    from_total_days_spinner = StringProperty("X") ##########################################
+    from_total_days_spinner = StringProperty() ##########################################
     from_total_month_spinner = StringProperty(CURRENT_MONTH) ##########################################
-    to_total_days_spinner = StringProperty("X")
+    to_total_days_spinner = StringProperty() ############################################
 
     total_hours_work_statistic = StringProperty()
     total_minutes_work_statistic = StringProperty()
-
 
     list_from_total_days = ListProperty()
     list_to_total_days = ListProperty()
@@ -91,7 +91,7 @@ class Pages(Carousel):
         super(Pages, self).__init__(**kwargs)
         self.load_slide(self.next_slide)  ######### следущий Pages
 
-        self.value_dict_total_time_work = ""
+        self.value_dict_total_time_work = "0:0"
 
         self.all_work_num_days_for_statistic = [] # Рабочие дни выбранного месяца
         self.all_month_for_statistic = [] # Все месяцы из словаря
@@ -106,14 +106,14 @@ class Pages(Carousel):
         self.file_dict = self.load_file_time_work() # Загрузка с HDD словаря
         self.sort_file_dict(self.file_dict) # Сразу обновляет статистику
 
-
-
-
     def update_statistic(self,month=CURRENT_MONTH):
         """Установка данныч для статистики
         число 1-го рабочего дня текущего месяца и последний раб день"""
         self.from_total_days_spinner = str(self.all_work_num_days_for_statistic[0]) # Первое число месяца
         self.list_from_total_days = map(str,self.all_work_num_days_for_statistic) # Установка списка чисел
+
+        for i in self.file_dict: # Получаем в i ключи словаря
+            self.all_month_for_statistic.append(i.split()[1])
 
         self.from_total_month_spinner = month
         self.spinner_month_statistic_lst = self.all_month_for_statistic
@@ -124,7 +124,6 @@ class Pages(Carousel):
 
         self.total_hours_work_statistic = time_statistic[0]
         self.total_minutes_work_statistic = time_statistic[1]
-
 
     def update_total_time_statistic(self):
         hours = 0
@@ -140,14 +139,6 @@ class Pages(Carousel):
         minut = int((total_time_in_sec - hours_total * 3600) / 60)
 
         return str(hours_total), str(minut)
-
-
-
-
-
-
-
-
 
     def sort_file_dict(self, file_dict, choice_month:str=CURRENT_MONTH, FLAG=False):
         get_list_month = [] # Только даты выбранного месяца
@@ -171,21 +162,32 @@ class Pages(Carousel):
         self.update_statistic(choice_month) # Обновление статистики
 
     def create_statistic_date(self,spinner):
-      match spinner.uid:
+        print(spinner.uid)
+        first_day = self.from_total_days_spinner
+        month_statistic = self.from_total_month_spinner
+        second_day = self.to_total_days_spinner
+        match spinner.uid:
             case 3557:
                 self.from_total_days_spinner = spinner.text
-                #print(self.from_total_days_spinner)
+                first_day = spinner.text
+                print(self.from_total_days_spinner)
             case 3593:
                 self.from_total_month_spinner = spinner.text
-                #print(self.from_total_month_spinner)
+                month_statistic = spinner.text
+                print(self.from_total_month_spinner)
             case 3629:
                 self.to_total_days_spinner = spinner.text
-                #print(self.to_total_days_spinner)
+                print(self.to_total_days_spinner)
+                second_day = spinner.text
+        date_statistic = (first_day, second_day)
+        self.sort_file_dict(self.file_dict,month_statistic)
+
+
 
     def create_start_work_time(self,spinner):
         match spinner.uid:
             case  116:
-                self.hours_start_work= spinner.text
+                self.hours_start_work = spinner.text
                 #print(spinner.uid,self.hours_start_work)
             case  157:
                 self.minutes_start_work = spinner.text
@@ -224,7 +226,7 @@ class Pages(Carousel):
         Clock.schedule_once(self.my_callback, 2)
         self.lab_save_txt = "Сохранено"
         print("Сохранено")
-        self.sort_file_dict(self.file_dict)#############################################################################
+        self.sort_file_dict(self.file_dict)
         print(self.file_dict)
 
     def load_file_time_work(self):
@@ -266,7 +268,6 @@ class Pages(Carousel):
 
         self.create_value_for_dict(total_time_work)
 
-
     def create_value_for_dict(self,total_time_work):
         """self.value_dict_total_time_work = формируется строка значений для словаря.
         "4:33" часы, минуты"""
@@ -277,7 +278,7 @@ class Pages(Carousel):
 
         self.total_minutes_work = str(total_time_work)[-5:-3]
         self.value_dict_total_time_work = self.total_hours_work + ":" + self.total_minutes_work
-
+        print(self.value_dict_total_time_work)
 
     def create_a_date_for_label(self):
         """Формируется ключ для словаря
@@ -292,6 +293,7 @@ class Pages(Carousel):
     def validate_file_time_work(self):
         data = self.key_dict_total_data
         time_work = self.value_dict_total_time_work
+
         if data in self.file_dict:
             self.write_or_cancel_poput()
         else:
