@@ -39,8 +39,9 @@ else:
 
 number_month = int(time.strftime("%m", time_day))
 CURRENT_MONTH = month_lst[number_month - 1]
-CURRENT_HOURS = time.strftime("%H", time_day)
-CURRENT_MINUTES = time.strftime("%M", time_day)
+
+# CURRENT_HOURS = time.strftime("%H", time_day)
+# CURRENT_MINUTES = time.strftime("%M", time_day)
 
 # if not os.path.isfile("data_base.dat"):  # создание на HDD файла, если нету
         # with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
@@ -81,7 +82,7 @@ class Pages(Carousel):
     spinner_month_lst = ListProperty(month_lst)
     spinner_month_statistic_lst = ListProperty()  # Устан.всех месяцев в Spinner
 
-    spinner_statistic_month_lst = ListProperty(["Должны быть те, что входят в статистику"])  # Устан.всех месяцев в Spinner
+    spinner_statistic_month_lst = ListProperty([])  # Устан.всех месяцев в Spinner
 
     label_month_lst = ListProperty([CURRENT_DAY, CURRENT_MONTH])  # Устан.даты в Label
 
@@ -104,40 +105,35 @@ class Pages(Carousel):
         self.file_dict = self.load_file_time_work() # Загрузка с HDD словаря
         self.sort_file_dict() # Сортировка
 
-    def install_statistic(self, all_month:set, month_choice:str,num_days, first_day:str, last_day:str,hours_stat:str,minutes_stat:str):
-        self.spinner_month_statistic_lst = all_month # list
-        self.from_total_month_spinner = month_choice # str
+    def install_statistic(self, month_choice:str,hours_stat:str,minutes_stat:str):
+        self.spinner_month_statistic_lst = self.all_month_for_statistic # list
+        self.from_total_month_spinner = month_choice
 
 
-        self.from_total_days_spinner = str(first_day)  # Первое число месяца
-        # print(self.from_total_days_spinner)  # Первое число месяца
-        self.list_from_total_days = map(str, num_days)  # Установка списка чисел
-        self.to_total_days_spinner = str(last_day)  # Последнее число месяца
-        # print(self.to_total_days_spinner)  # Последнее число месяца
-        self.list_to_total_days = map(str, num_days)  # Установка списка чисел
+        self.from_total_days_spinner = str(self.all_work_num_days_for_statistic[0])  # Первое число месяца
+        self.list_from_total_days = map(str, self.all_work_num_days_for_statistic)  # Установка списка чисел
 
+        self.to_total_days_spinner = str(self.all_work_num_days_for_statistic[-1])  # Последнее число месяца
+
+        self.list_to_total_days = map(str, self.all_work_num_days_for_statistic)  # Установка списка чисел
 
         self.total_hours_work_statistic = hours_stat
         self.total_minutes_work_statistic = minutes_stat
 
 
 
-    def update_statistic(self,month_choice,num_days:list,keys_date:list):
+    def update_statistic(self,month_choice):
         """Установка данных для статистики
         число 1-го рабочего дня текущего месяца и последний раб день"""
-        # print(num_days)
-        first_day = num_days[0]
-        last_day = num_days[-1]
-        month_stat = month_choice
-        all_month = []
+        all_month_for_statistic = []
         for i in self.file_dict: # Получаем в i ключи словаря
-            all_month.append(i.split()[1])
-        all_month = set(all_month)
-        time_statistic = self.update_total_time_statistic(keys_date)
+            all_month_for_statistic.append(i.split()[1])
+        self.all_month_for_statistic = set(all_month_for_statistic)
+
+        time_statistic = self.update_total_time_statistic(self.keys_all_work_data_sorted)
         hours_stat = time_statistic[0]
         minutes_stat = time_statistic[1]
-
-        self.install_statistic(all_month, month_stat,num_days,first_day,last_day,hours_stat,minutes_stat)
+        self.install_statistic(month_choice,hours_stat,minutes_stat)
 
     def update_total_time_statistic(self,keys_all_work_data_sorted):
         hours = 0
@@ -157,28 +153,26 @@ class Pages(Carousel):
     def sort_file_dict(self, choice_month:str=CURRENT_MONTH,firstday=None,lastday=None, FLAG=True):
         get_list_month = [] # Только даты выбранного месяца
 
-        all_work_num_days = [] # Только числа: int выбранного месяца отсортированный
-        keys_all_work_data_sorted = [] # Ключи данного месяца
-
         for i in self.file_dict: # Получаем в i ключи словаря
             if i.split()[1] == choice_month: # Определяем нужный месяц из списка. Вычленяем название месаца
                 get_list_month.append(i) # Записываем в список только даты с нужным месяцем
+        self.all_work_num_days_for_statistic.clear()
         if FLAG:
             for i in get_list_month: # Идём по списку месяца
                 num_day = int(i.split()[0]) # Вычленяя только число месяца оборачивая в int()
-                all_work_num_days.append(num_day)
+                self.all_work_num_days_for_statistic.append(num_day) # Только числа: int выбранного месяца
         else:
             for i in get_list_month:
                 num_day = int(i.split()[0])
                 if int(firstday) <= num_day <= int(lastday):
-                    all_work_num_days.append(num_day)
+                    self.all_work_num_days_for_statistic.append(num_day)
 
-        all_work_num_days.sort() # Сортировка списка чисел месяца
+        self.all_work_num_days_for_statistic.sort() # Сортировка списка чисел месяца
+        self.keys_all_work_data_sorted.clear()
+        for i in range(len(self.all_work_num_days_for_statistic)): # Проход по длинне списка дат
+            self.keys_all_work_data_sorted.append(str(self.all_work_num_days_for_statistic[i]) + " " + choice_month) # создание строки ключа словаря и запись в список
 
-        for i in range(len(all_work_num_days)): # Проход по длинне списка дат
-            keys_all_work_data_sorted.append(str(all_work_num_days[i]) + " " + choice_month) # создание строки ключа словаря и запись в список
-
-        self.update_statistic(choice_month,all_work_num_days,keys_all_work_data_sorted) # Обновление статистики
+        self.update_statistic(choice_month) # Обновление статистики
 
 
 
@@ -186,27 +180,21 @@ class Pages(Carousel):
 
 
     def create_statistic_date(self,spinner):
-
-        first_day = self.from_total_days_spinner
-        month_choice = self.from_total_month_spinner
-        last_day = self.to_total_days_spinner
-        print(first_day)
-        print(month_choice)
-        print(last_day)
+        print("Запуск create_statistic_date()")
         match spinner.uid:
             case 3557:
                 self.from_total_days_spinner = spinner.text
-                first_day = spinner.text
+
                 #print(self.from_total_days_spinner)
             case 3593:
                 self.from_total_month_spinner = spinner.text
-                month_choice = spinner.text
+
                 #print(self.from_total_month_spinner)
             case 3629:
                 self.to_total_days_spinner = spinner.text
                 #print(self.to_total_days_spinner)
-                last_day = spinner.text
-        self.sort_file_dict(month_choice,first_day,last_day,FLAG=False)
+
+        #self.sort_file_dict(month_choice,first_day,last_day,FLAG=False)
 
     def sort_statistic(self,file_dict,month_statistic,firstday,lastday):
         get_list_month = []  # Только даты выбранного месяца
@@ -271,8 +259,9 @@ class Pages(Carousel):
         Clock.schedule_once(self.my_callback, 2)
         self.lab_save_txt = "Сохранено"
         print("Сохранено")
-        self.sort_file_dict(self.file_dict)
+        self.sort_file_dict()
         print(self.file_dict)
+        print("++++++++++++++++++++++++++++++++++++++++++++++++")
 
     def load_file_time_work(self):
         try:
@@ -283,7 +272,7 @@ class Pages(Carousel):
         except (IOError,EOFError,FileNotFoundError):
             print("Не открылся. Создался пустой")
             with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
-            self.file_dict = {}
+            file_dict = {}
             print(self.file_dict)
         return file_dict
 
@@ -309,8 +298,6 @@ class Pages(Carousel):
         time_start_work = timedelta(hours=Hour_start_work,minutes=Min_start_work)
         time_end_work = timedelta(hours=Hour_end_work,minutes=Min_end_work)
         total_time_work = (time_end_work - time_start_work) - total_time_lunch
-        # print(total_time_work)
-
         self.create_value_for_dict(total_time_work)
 
     def create_value_for_dict(self,total_time_work):
@@ -323,7 +310,6 @@ class Pages(Carousel):
 
         self.total_minutes_work = str(total_time_work)[-5:-3]
         self.value_dict_total_time_work = self.total_hours_work + ":" + self.total_minutes_work
-        # print(self.value_dict_total_time_work)
 
     def create_a_date_for_label(self):
         """Формируется ключ для словаря
