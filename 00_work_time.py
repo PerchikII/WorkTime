@@ -26,8 +26,8 @@ from kivy.core.window import Window
 dirname = os.path.split(os.path.abspath(__file__))
 Builder.load_file(os.path.join(dirname[0],"00_work_time.kv"))
 
-month_lst = ['Января', 'Февраля', 'Марта', 'Апреля','Мая', 'Июня',
-             'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря']
+month_lst = ['Январь', 'Февраль', 'Март', 'Апрель','Май', 'Июнь',
+             'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
 
 time_now = time.time() # Секунды с начала эпохи
 time_day = time.localtime(time_now) # Текущее число
@@ -64,9 +64,9 @@ class Pages(Carousel):
     total_hours_work = StringProperty("00")
     total_minutes_work = StringProperty("00")
 
-    from_total_days_spinner = StringProperty("1") ##########################################
+    from_total_days_spinner = StringProperty("") ##########################################
     from_total_month_spinner = StringProperty(CURRENT_MONTH) ##########################################
-    to_total_days_spinner = StringProperty("0") ############################################
+    to_total_days_spinner = StringProperty("") ############################################
 
     total_hours_work_statistic = StringProperty()
     total_minutes_work_statistic = StringProperty()
@@ -109,12 +109,14 @@ class Pages(Carousel):
         self.spinner_month_statistic_lst = self.all_month_for_statistic # list
         self.from_total_month_spinner = month_choice
 
+        try:
+            self.from_total_days_spinner = str(self.all_work_num_days_for_statistic[0])  # Первое число месяца
+            self.to_total_days_spinner = str(self.all_work_num_days_for_statistic[-1])  # Последнее число месяца
+        except IndexError:
+            self.from_total_days_spinner = ''  # Первое число месяца
+            self.to_total_days_spinner = '' # Последнее число месяца
 
-        self.from_total_days_spinner = str(self.all_work_num_days_for_statistic[0])  # Первое число месяца
-        self.list_from_total_days = map(str, self.all_work_num_days_for_statistic)  # Установка списка чисел
-
-        self.to_total_days_spinner = str(self.all_work_num_days_for_statistic[-1])  # Последнее число месяца
-
+        self.list_from_total_days = map(str, self.all_work_num_days_for_statistic) # Установка списка чисел
         self.list_to_total_days = map(str, self.all_work_num_days_for_statistic)  # Установка списка чисел
 
         self.total_hours_work_statistic = hours_stat
@@ -157,15 +159,9 @@ class Pages(Carousel):
             if i.split()[1] == choice_month: # Определяем нужный месяц из списка. Вычленяем название месаца
                 get_list_month.append(i) # Записываем в список только даты с нужным месяцем
         self.all_work_num_days_for_statistic.clear()
-        if FLAG:
-            for i in get_list_month: # Идём по списку месяца
-                num_day = int(i.split()[0]) # Вычленяя только число месяца оборачивая в int()
-                self.all_work_num_days_for_statistic.append(num_day) # Только числа: int выбранного месяца
-        else:
-            for i in get_list_month:
-                num_day = int(i.split()[0])
-                if int(firstday) <= num_day <= int(lastday):
-                    self.all_work_num_days_for_statistic.append(num_day)
+        for i in get_list_month: # Идём по списку месяца
+            num_day = int(i.split()[0]) # Вычленяя только число месяца оборачивая в int()
+            self.all_work_num_days_for_statistic.append(num_day) # Только числа: int выбранного месяца
 
         self.all_work_num_days_for_statistic.sort() # Сортировка списка чисел месяца
         self.keys_all_work_data_sorted.clear()
@@ -181,40 +177,61 @@ class Pages(Carousel):
 
     def create_statistic_date(self,spinner):
         print("Запуск create_statistic_date()")
+        month_choice = self.from_total_month_spinner
+        firstday = self.from_total_days_spinner
+        lastday = self.to_total_days_spinner
+
         match spinner.uid:
             case 3557:
                 self.from_total_days_spinner = spinner.text
 
-                #print(self.from_total_days_spinner)
+                if self.from_total_month_spinner != '' and  self.to_total_days_spinner != '':
+                    self.sort_for_statistic(self.from_total_month_spinner,self.from_total_days_spinner,
+                                            self.to_total_days_spinner)
             case 3593:
                 self.from_total_month_spinner = spinner.text
-
-                #print(self.from_total_month_spinner)
+                if self.from_total_days_spinner != '' and  self.to_total_days_spinner != '':
+                    self.sort_for_statistic(self.from_total_month_spinner, self.from_total_days_spinner,
+                                            self.to_total_days_spinner)
             case 3629:
                 self.to_total_days_spinner = spinner.text
-                #print(self.to_total_days_spinner)
+                if self.from_total_days_spinner != '' and self.from_total_month_spinner != '':
+                    self.sort_for_statistic(self.from_total_month_spinner, self.from_total_days_spinner,
+                                            self.to_total_days_spinner)
 
-        #self.sort_file_dict(month_choice,first_day,last_day,FLAG=False)
 
-    def sort_statistic(self,file_dict,month_statistic,firstday,lastday):
+
+
+    def sort_for_statistic(self,month_choice,firstday,lastday):
         get_list_month = []  # Только даты выбранного месяца
         num_days_lst =[]
         list_keys_for_statistic = []
 
-        for i in file_dict:  # Получаем в i ключи словаря
-            if i.split()[1] == month_statistic:  # Определяем нужный месяц из списка. Вычленяем название месаца
+        for i in self.file_dict:  # Получаем в i ключи словаря
+            if i.split()[1] == month_choice:  # Определяем нужный месяц из списка. Вычленяем название месаца
                 get_list_month.append(i)  # Записываем в список только даты с нужным месяцем
+
         for i in get_list_month:  # Идём по списку месяцев
             num_day = int(i.split()[0])  # Вычленяя только число месяца оборачивая в int()
             num_days_lst.append(num_day)
-
+        print(num_days_lst)
         for i in sorted(num_days_lst):
             if int(firstday) <= i <= int(lastday):
-                list_keys_for_statistic.append(str(i)+ " "+month_statistic)
-
+                list_keys_for_statistic.append(str(i) + " " + month_choice)
+        print(list_keys_for_statistic)
         time_statistic = self.update_total_time_statistic(list_keys_for_statistic)
         self.total_hours_work_statistic = time_statistic[0]
         self.total_minutes_work_statistic = time_statistic[1]
+
+
+
+
+
+
+
+
+
+
 
 
     def create_start_work_time(self,spinner):
