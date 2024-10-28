@@ -1,9 +1,8 @@
 import time
 import os
-from calendar import month
+# from calendar import month
 from datetime import timedelta
 import pickle
-
 
 import kivy
 from kivy.app import App
@@ -13,10 +12,9 @@ from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.lang.builder import Builder
-from kivy.properties import ListProperty,StringProperty
+from kivy.properties import ListProperty, StringProperty
 from kivy.clock import Clock
 from kivy.core.window import Window
-
 
 # class MyList(list):
 #     def __getitem__ (self, offset):
@@ -24,13 +22,13 @@ from kivy.core.window import Window
 
 """Установить kv файл в директорию совместно в main.py"""
 dirname = os.path.split(os.path.abspath(__file__))
-Builder.load_file(os.path.join(dirname[0],"00_work_time.kv"))
+Builder.load_file(os.path.join(dirname[0], "main_kv.kv"))
 
-month_lst = ['Январь', 'Февраль', 'Март', 'Апрель','Май', 'Июнь',
+month_lst = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
              'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
 
-time_now = time.time() # Секунды с начала эпохи
-time_day = time.localtime(time_now) # Текущее число
+time_now = time.time()  # Секунды с начала эпохи
+time_day = time.localtime(time_now)  # Текущее число
 
 if time.strftime("%d", time_day)[0] == "0":
     CURRENT_DAY = time.strftime("%d", time_day)[1]
@@ -40,11 +38,12 @@ else:
 number_month = int(time.strftime("%m", time_day))
 CURRENT_MONTH = month_lst[number_month - 1]
 
+
 # CURRENT_HOURS = time.strftime("%H", time_day)
 # CURRENT_MINUTES = time.strftime("%M", time_day)
 
 # if not os.path.isfile("data_base.dat"):  # создание на HDD файла, если нету
-        # with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
+# with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
 
 class Pages(Carousel):
     """Читай переменные. Их имена обо всём говорят."""
@@ -64,9 +63,9 @@ class Pages(Carousel):
     total_hours_work = StringProperty("00")
     total_minutes_work = StringProperty("00")
 
-    from_total_days_spinner = StringProperty("") ##########################################
-    from_total_month_spinner = StringProperty(CURRENT_MONTH) ##########################################
-    to_total_days_spinner = StringProperty("") ############################################
+    from_total_days_spinner = StringProperty("")  ##########################################
+    total_month_spinner = StringProperty(CURRENT_MONTH)  ##########################################
+    to_total_days_spinner = StringProperty("")  ############################################
 
     total_hours_work_statistic = StringProperty()
     total_minutes_work_statistic = StringProperty()
@@ -94,53 +93,74 @@ class Pages(Carousel):
 
         self.value_dict_total_time_work = "0:0"
 
-        self.all_work_num_days_for_statistic = [] # Рабочие дни выбранного месяца
-        self.all_month_for_statistic = [] # Все месяцы из словаря
+        self.all_work_num_days_for_statistic = []  # Рабочие дни выбранного месяца
+        self.all_month_for_statistic = []  # Все месяцы из словаря
 
         self.keys_all_work_data_sorted = []
         self.file_dict = {}
         self.main()
 
     def main(self):
-        self.file_dict = self.load_file_time_work() # Загрузка с HDD словаря
-        self.sort_file_dict() # Сортировка
+        self.file_dict = self.load_file_time_work()  # Загрузка с HDD словаря
+        self.update_statistic()
 
-    def install_statistic(self, month_choice:str,hours_stat:str,minutes_stat:str):
-        self.spinner_month_statistic_lst = self.all_month_for_statistic # list
-        self.from_total_month_spinner = month_choice
+    def update_statistic(self, choice_month: str = CURRENT_MONTH):
+        lst_dates_current_month = self.get_dates_from_current_month(choice_month)  # Список дат с нужным месяцем
+        lst_sorted_num_current_month = self.get_num_days(lst_dates_current_month)  # Список чисел нужного месяца
+        lst_keys_dates = self.create_keys_date_choice_month(lst_sorted_num_current_month)  # Список ["10 Октябрь"]
+        time_statistic = self.update_total_time_statistic(lst_keys_dates)  # Кортеж (170,45) часы минуты
+        lst_all_month = self.get_set_all_month()
 
-        try:
-            self.from_total_days_spinner = str(self.all_work_num_days_for_statistic[0])  # Первое число месяца
-            self.to_total_days_spinner = str(self.all_work_num_days_for_statistic[-1])  # Последнее число месяца
-        except IndexError:
-            self.from_total_days_spinner = ''  # Первое число месяца
-            self.to_total_days_spinner = '' # Последнее число месяца
+        self.install_statistic(lst_sorted_num_current_month, lst_all_month, time_statistic, choice_month)
 
-        self.list_from_total_days = map(str, self.all_work_num_days_for_statistic) # Установка списка чисел
-        self.list_to_total_days = map(str, self.all_work_num_days_for_statistic)  # Установка списка чисел
+    def install_statistic(self, *args):
+        # print(args[0]) - # Первое и последнее число месяца
+        # print(args[1]) -  # Устан.всех месяцев в Spinner
+        # print(args[2]) - # Установка времени часы, минуты
+        # print(args[3]) - # Устан.выбранного месяца в Spinner
+        self.spinner_month_statistic_lst = args[1]  # Устан.всех месяцев в Spinner
+        self.total_month_spinner = args[3]  # Устан.выбранного месяца в Spinner
 
-        self.total_hours_work_statistic = hours_stat
-        self.total_minutes_work_statistic = minutes_stat
+        self.from_total_days_spinner = str(args[0][0])  # Первое число месяца
+        self.to_total_days_spinner = str(args[0][-1])  # Последнее число месяца
+        self.list_from_total_days = map(str, args[0])  # Установка списка чисел
+        self.list_to_total_days = map(str, args[0])  # Установка списка чисел
 
+        self.total_hours_work_statistic = args[2][0]  # Установка времени часы
+        self.total_minutes_work_statistic = args[2][1]  # Установка времени минуты
 
+    def get_set_all_month(self):
+        all_month = []
+        for i in self.file_dict:  # Получаем в i ключи словаря
+            all_month.append(i.split()[1])
+        return set(all_month)
 
-    def update_statistic(self,month_choice):
-        """Установка данных для статистики
-        число 1-го рабочего дня текущего месяца и последний раб день"""
-        all_month_for_statistic = []
-        for i in self.file_dict: # Получаем в i ключи словаря
-            all_month_for_statistic.append(i.split()[1])
-        self.all_month_for_statistic = set(all_month_for_statistic)
+    def get_dates_from_current_month(self, choice_month):
+        list_month = []  # Только даты выбранного месяца
+        for i in self.file_dict:  # Получаем в i ключи словаря
+            if i.split()[1] == choice_month:  # Определяем нужный месяц из списка. Вычленяем название месяца
+                list_month.append(i)  # Записываем в список только даты с нужным месяцем
+        return list_month
 
-        time_statistic = self.update_total_time_statistic(self.keys_all_work_data_sorted)
-        hours_stat = time_statistic[0]
-        minutes_stat = time_statistic[1]
-        self.install_statistic(month_choice,hours_stat,minutes_stat)
+    def get_num_days(self, lst_current_month: list):
+        lst_num_days = []
+        for i in lst_current_month:  # Идём по списку месяца
+            num_day = int(i.split()[0])  # Вычленяя только число месяца оборачивая в int()
+            lst_num_days.append(num_day)  # Только числа: int выбранного месяца
+        lst_num_days.sort()
+        return lst_num_days
 
-    def update_total_time_statistic(self,keys_all_work_data_sorted):
+    def create_keys_date_choice_month(self, sorted_num_current_days: list, month_choice=CURRENT_MONTH):
+        keys_all_work = []
+        for i in range(len(sorted_num_current_days)):  # Проход по длинне списка дат
+            keys_all_work.append(
+                str(sorted_num_current_days[i]) + " " + month_choice)  # создание строки ключа словаря и запись в список
+        return keys_all_work
+
+    def update_total_time_statistic(self, keys_all_work_data_sorted: list):
         hours = 0
         minutes = 0
-        for i in keys_all_work_data_sorted: # ==========>>>>>>> ключи
+        for i in keys_all_work_data_sorted:  # ==========>>>>>>> ключи
             hours += int(self.file_dict[i].split(":")[0])
             minutes += int(self.file_dict[i].split(":")[1])
 
@@ -152,121 +172,81 @@ class Pages(Carousel):
 
         return str(hours_total), str(minut)
 
-    def sort_file_dict(self, choice_month:str=CURRENT_MONTH,firstday=None,lastday=None, FLAG=True):
-        get_list_month = [] # Только даты выбранного месяца
-
-        for i in self.file_dict: # Получаем в i ключи словаря
-            if i.split()[1] == choice_month: # Определяем нужный месяц из списка. Вычленяем название месаца
-                get_list_month.append(i) # Записываем в список только даты с нужным месяцем
-        self.all_work_num_days_for_statistic.clear()
-        for i in get_list_month: # Идём по списку месяца
-            num_day = int(i.split()[0]) # Вычленяя только число месяца оборачивая в int()
-            self.all_work_num_days_for_statistic.append(num_day) # Только числа: int выбранного месяца
-
-        self.all_work_num_days_for_statistic.sort() # Сортировка списка чисел месяца
-        self.keys_all_work_data_sorted.clear()
-        for i in range(len(self.all_work_num_days_for_statistic)): # Проход по длинне списка дат
-            self.keys_all_work_data_sorted.append(str(self.all_work_num_days_for_statistic[i]) + " " + choice_month) # создание строки ключа словаря и запись в список
-
-        self.update_statistic(choice_month) # Обновление статистики
-
-
-
-
-
-
-    def create_statistic_date(self,spinner):
-        print("Запуск create_statistic_date()")
-        month_choice = self.from_total_month_spinner
-        firstday = self.from_total_days_spinner
-        lastday = self.to_total_days_spinner
+    def create_choice_spinner(self, spinner):
 
         match spinner.uid:
             case 3557:
                 self.from_total_days_spinner = spinner.text
 
-                if self.from_total_month_spinner != '' and  self.to_total_days_spinner != '':
-                    self.sort_for_statistic(self.from_total_month_spinner,self.from_total_days_spinner,
-                                            self.to_total_days_spinner)
+                if self.total_month_spinner != '' and self.to_total_days_spinner != '':
+                    self.statistic_from_spinner()
             case 3593:
-                self.from_total_month_spinner = spinner.text
-                if self.from_total_days_spinner != '' and  self.to_total_days_spinner != '':
-                    self.sort_for_statistic(self.from_total_month_spinner, self.from_total_days_spinner,
-                                            self.to_total_days_spinner)
+                self.total_month_spinner = spinner.text
+                if self.from_total_days_spinner != '' and self.to_total_days_spinner != '':
+                    self.statistic_from_spinner(self.total_month_spinner)
             case 3629:
                 self.to_total_days_spinner = spinner.text
-                if self.from_total_days_spinner != '' and self.from_total_month_spinner != '':
-                    self.sort_for_statistic(self.from_total_month_spinner, self.from_total_days_spinner,
-                                            self.to_total_days_spinner)
+                if self.from_total_days_spinner != '' and self.total_month_spinner != '':
+                    self.statistic_from_spinner()
 
+    def statistic_from_spinner(self, choice_month=CURRENT_MONTH):
+        lst_dates_choice_month = self.get_from_current_month(choice_month, self.from_total_days_spinner,
+                                                             self.to_total_days_spinner)  # Получаем даты с нужным месяцем list
 
+        time_statistic = self.update_total_time_statistic(lst_dates_choice_month)  # Кортеж (170,45) часы минуты
 
+        self.install_totaltime_statistic(time_statistic)
 
-    def sort_for_statistic(self,month_choice,firstday,lastday):
-        get_list_month = []  # Только даты выбранного месяца
-        num_days_lst =[]
-        list_keys_for_statistic = []
+    def install_totaltime_statistic(self, totaltime):
 
-        for i in self.file_dict:  # Получаем в i ключи словаря
-            if i.split()[1] == month_choice:  # Определяем нужный месяц из списка. Вычленяем название месаца
-                get_list_month.append(i)  # Записываем в список только даты с нужным месяцем
+        self.total_hours_work_statistic = str(totaltime[0])  # Установка времени часы
+        self.total_minutes_work_statistic = str(totaltime[1])  # Установка времени минуты
 
-        for i in get_list_month:  # Идём по списку месяцев
-            num_day = int(i.split()[0])  # Вычленяя только число месяца оборачивая в int()
-            num_days_lst.append(num_day)
-        print(num_days_lst)
-        for i in sorted(num_days_lst):
+    def get_from_current_month(self, choice_month, firstday, lastday):
+        list_dates = self.get_dates_from_current_month(choice_month)  # даты выбранного месяца List
+
+        list_num_choice_month = self.get_num_days(list_dates)  # Список чисел выбранного месяца List
+
+        list_num_choice = []
+        for i in list_num_choice_month:
             if int(firstday) <= i <= int(lastday):
-                list_keys_for_statistic.append(str(i) + " " + month_choice)
-        print(list_keys_for_statistic)
-        time_statistic = self.update_total_time_statistic(list_keys_for_statistic)
-        self.total_hours_work_statistic = time_statistic[0]
-        self.total_minutes_work_statistic = time_statistic[1]
+                list_num_choice.append(i)
+        list_keys = self.create_keys_date_choice_month(list_num_choice, choice_month)  # Список ключей
+        return list_keys
 
-
-
-
-
-
-
-
-
-
-
-
-    def create_start_work_time(self,spinner):
+    def create_start_work_time(self, spinner):
         match spinner.uid:
-            case  116:
+            case 116:
                 self.hours_start_work = spinner.text
-                #print(spinner.uid,self.hours_start_work)
-            case  157:
+                # print(spinner.uid,self.hours_start_work)
+            case 157:
                 self.minutes_start_work = spinner.text
-                #print(spinner.uid, self.minutes_start_work)
-            case  290:
+                # print(spinner.uid, self.minutes_start_work)
+            case 290:
                 self.hours_end_work = spinner.text
-                #print(spinner.uid, self.hours_end_work)
-            case  331:
+                # print(spinner.uid, self.hours_end_work)
+            case 331:
                 self.minutes_end_work = spinner.text
-                #print(spinner.uid, self.minutes_end_work)
-            case  204:
+                # print(spinner.uid, self.minutes_end_work)
+            case 204:
                 self.hours_start_lunch = spinner.text
-                #print(spinner.uid, self.hours_start_lunch)
-            case  245:
+                # print(spinner.uid, self.hours_start_lunch)
+            case 245:
                 self.minutes_start_lunch = spinner.text
-                #print(spinner.uid, self.minutes_start_lunch)
-            case  378:
+                # print(spinner.uid, self.minutes_start_lunch)
+            case 378:
                 self.hours_end_lunch = spinner.text
-                #print(spinner.uid, self.hours_end_lunch)
-            case  419:
+                # print(spinner.uid, self.hours_end_lunch)
+            case 419:
                 self.minutes_end_lunch = spinner.text
-                #print(spinner.uid, self.minutes_end_lunch)
+                # print(spinner.uid, self.minutes_end_lunch)
 
         tuple_time = (self.hours_start_work, self.minutes_start_work, self.hours_end_work,
-                    self.minutes_end_work, self.hours_start_lunch, self.minutes_start_lunch,
-                    self.hours_end_lunch, self.minutes_end_lunch)
+                      self.minutes_end_work, self.hours_start_lunch, self.minutes_start_lunch,
+                      self.hours_end_lunch, self.minutes_end_lunch)
         self.work_time_calc(tuple_time)
 
-    def my_callback(self,instance):
+    def my_callback(self, instance):
         self.lab_save_txt = "Отработано:"
         return False
 
@@ -276,7 +256,7 @@ class Pages(Carousel):
         Clock.schedule_once(self.my_callback, 2)
         self.lab_save_txt = "Сохранено"
         print("Сохранено")
-        self.sort_file_dict()
+        self.update_statistic()
         print(self.file_dict)
         print("++++++++++++++++++++++++++++++++++++++++++++++++")
 
@@ -284,16 +264,17 @@ class Pages(Carousel):
         try:
             with open("data_base.dat", 'rb') as file:
                 file_dict = pickle.load(file)
-                print("Открыт успешно",file_dict)
+                print("Открыт успешно", file_dict)
                 print("===========================================")
-        except (IOError,EOFError,FileNotFoundError):
+        except (IOError, EOFError, FileNotFoundError):
             print("Не открылся. Создался пустой")
-            with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
+            with open(os.path.join(dirname[0], "data_base.dat"), 'wb'):
+                pass
             file_dict = {}
             print(self.file_dict)
         return file_dict
 
-    def work_time_calc(self,args):
+    def work_time_calc(self, args):
         """" В ф-ции расчитывается время отработки """
 
         Hour_start_work = int(args[0])
@@ -311,13 +292,12 @@ class Pages(Carousel):
         time_end_lunch = timedelta(hours=Hour_end_lunch, minutes=Min_end_lunch)
         total_time_lunch = time_end_lunch - time_start_lunch
 
-
-        time_start_work = timedelta(hours=Hour_start_work,minutes=Min_start_work)
-        time_end_work = timedelta(hours=Hour_end_work,minutes=Min_end_work)
+        time_start_work = timedelta(hours=Hour_start_work, minutes=Min_start_work)
+        time_end_work = timedelta(hours=Hour_end_work, minutes=Min_end_work)
         total_time_work = (time_end_work - time_start_work) - total_time_lunch
         self.create_value_for_dict(total_time_work)
 
-    def create_value_for_dict(self,total_time_work):
+    def create_value_for_dict(self, total_time_work):
         """self.value_dict_total_time_work = формируется строка значений для словаря.
         "4:33" часы, минуты"""
         if len(str(total_time_work)) == 8:
@@ -361,7 +341,8 @@ class Pages(Carousel):
                 mynepopup.dismiss()
             elif instance.text == "Cancel":
                 mynepopup.dismiss()
-        mynepopup = Popup(title = "Info",size_hint = (.8, .4))
+
+        mynepopup = Popup(title="Info", size_hint=(.8, .4))
         container = FloatLayout(size_hint=(1, 1))
         lab = Label(text="Рабочий день на эту дату существует.\n Переписать?",
                     font_size=30, size_hint=(1, .3), pos_hint={'x': .001, 'top': 1},
@@ -380,17 +361,6 @@ class Pages(Carousel):
         return
 
 
-
-
-
-
-
-
-
-
-
-
-
 class MyApp(App):
     def build(self):
         self.title = "Паши дурачёк, получишь значёк"
@@ -400,6 +370,7 @@ class MyApp(App):
 
     def quit_program(self):
         exit()
+
 
 if __name__ == '__main__':
     MyApp().run()

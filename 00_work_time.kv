@@ -251,20 +251,20 @@
                     size_hint: .1, 1
                     text: root.from_total_days_spinner
                     values: root.list_from_total_days
-                    on_text: root.create_statistic_date(self)
+                    on_text: root.create_choice_spinner(self)
 
                 TimeSpinner:
                     id: from_total_month
                     size_hint: .4, 1
-                    text: root.from_total_month_spinner
+                    text: root.total_month_spinner
                     values: root.spinner_month_statistic_lst
-                    on_text: root.create_statistic_date(self)
+                    on_text: root.create_choice_spinner(self)
                 TimeSpinner:
                     id: to_total_days
                     size_hint: .1, 1
                     text: root.to_total_days_spinner
                     values: root.list_to_total_days
-                    on_text: root.create_statistic_date(self)
+                    on_text: root.create_choice_spinner(self)
         BoxLayout:
             size_hint: 1,.055
             Label:
