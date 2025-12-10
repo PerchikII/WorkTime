@@ -8,13 +8,16 @@ import os
 from datetime import timedelta
 import pickle
 
-import kivy
-from kivy.app import App
+from kivymd.app import MDApp
 from kivy.uix.popup import Popup
-from kivy.uix.carousel import Carousel
-from kivy.uix.label import Label
+from kivymd.uix.label import MDLabel
 from kivy.uix.button import Button
-from kivy.uix.floatlayout import FloatLayout
+from kivymd.uix.screenmanager import MDScreenManager
+from kivy.uix.screenmanager import SlideTransition
+from kivymd.uix.screen import MDScreen
+from kivymd.uix.textfield import MDTextField
+
+
 from kivy.lang.builder import Builder
 from kivy.properties import ListProperty,StringProperty
 from kivy.clock import Clock
@@ -38,7 +41,7 @@ INSTALL_TIME = [x.rstrip() for x in install_time_in_stringproperty()]
 
 """Установить kv файл в директорию совместно в main.py"""
 dir_name = os.path.split(os.path.abspath(__file__))
-Builder.load_file(os.path.join(dir_name[0], "main_kv.kv"))
+
 
 month_lst = ['Январь', 'Февраль', 'Март', 'Апрель','Май', 'Июнь',
              'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
@@ -55,10 +58,36 @@ number_month = int(time.strftime("%m", time_day))
 CURRENT_MONTH = month_lst[number_month - 1]
 
 
+class PagesManager(MDScreenManager):
+    def __init__(self, **kwargs):
+        MDScreenManager.__init__(self, **kwargs)
+    def on_touch_down(self, touch):
+        self.tap_X_Down = touch.x
+        self.tap_Y_Down = touch.y
+        return super(PagesManager, self).on_touch_down(touch)
+    def on_touch_up(self, touch):
+        self.tap_X_Up = touch.x
+        self.tap_Y_Up = touch.y
+        if (self.tap_X_Down - self.tap_X_Up) > 100:
+            if self.current == "main_page":
+               self.transition.direction = "left"
+               self.current = "stat_page"
+               self.transition = SlideTransition()
+        if self.tap_X_Down < self.tap_X_Up:
+             if  self.current == "stat_page":
+                 self.transition.direction = "right"
+                 self.current = "main_page"
+                 self.transition = SlideTransition()
+        if (self.tap_Y_Down - self.tap_Y_Up) > 100:
+            if self.current == "main_page":
+                self.transition.direction = "down"
+                self.current = "sett_page"
+        return super(PagesManager, self).on_touch_up(touch)
 
 
 
-class Pages(Carousel):
+
+class Pages_main(MDScreen):
     """Читай переменные. Их имена обо всём говорят."""
     hours_start_work = StringProperty(INSTALL_TIME[0])
     minutes_start_work = StringProperty(INSTALL_TIME[1])
@@ -75,40 +104,21 @@ class Pages(Carousel):
     total_hours_work = StringProperty("00")
     total_minutes_work = StringProperty("00")
 
-    from_total_days_spinner = StringProperty("")
-    total_month_spinner = StringProperty(CURRENT_MONTH)
-    to_total_days_spinner = StringProperty("")
-
-    total_hours_work_statistic = StringProperty()
-    total_minutes_work_statistic = StringProperty()
-
-    list_from_total_days = ListProperty()
-    list_to_total_days = ListProperty()
-
     lab_save_txt = StringProperty("Отработано:")
-
-    day_spinner_str = StringProperty(CURRENT_DAY)
-    month_spinner_str = StringProperty(CURRENT_MONTH)
-
-    spinner_month_lst = ListProperty(month_lst)
-    spinner_month_statistic_lst = ListProperty()  # Устан.всех месяцев в Spinner
-
-    spinner_statistic_month_lst = ListProperty([])  # Устан.всех месяцев в Spinner
 
     label_month_lst = ListProperty([CURRENT_DAY, CURRENT_MONTH])  # Устан.даты в Label
 
     key_dict_total_data = CURRENT_DAY + " " + CURRENT_MONTH
 
     def __init__(self, **kwargs):
-        super(Pages, self).__init__(**kwargs)
-        self.load_slide(self.next_slide)  ##################### следущий Pages
-        self.ids["check_save_time"].state = INSTALL_TIME[8]
+        MDScreen.__init__(self,**kwargs)
+        # self.ids["check_save_time"].state = INSTALL_TIME[8]
         self.value_dict_total_time_work = "0:0"
         self.all_work_num_days_for_statistic = [] # Рабочие дни выбранного месяца
         self.all_month_for_statistic = [] # Все месяцы из словаря
         self.keys_all_work_data_sorted = []
         self.file_dict = {}
-        self.main()
+        #self.main()
 
     def main(self):
         self.file_dict = self.load_file_time_work() # Загрузка с HDD словаря
@@ -404,7 +414,7 @@ class Pages(Carousel):
                 mynepopup.dismiss()
         mynepopup = Popup(title = "Info",size_hint = (.8, .4))
         container = FloatLayout(size_hint=(1, 1))
-        lab = Label(text="Рабочий день на эту дату существует.\n Переписать?",
+        lab = MDLabel(text="Рабочий день на эту дату существует.\n Переписать?",
                     font_size=30, size_hint=(1, .3), pos_hint={'x': .001, 'top': 1},
                     halign='center')
         container.add_widget(lab)
@@ -458,6 +468,28 @@ class Pages(Carousel):
                     f.write("00" + "\n")
                 f.write(condition)
 
+class Pages_stat(MDScreen):
+    """Читай переменные. Их имена обо всём говорят."""
+    from_total_days_spinner = StringProperty("")
+    total_month_spinner = StringProperty(CURRENT_MONTH)
+    to_total_days_spinner = StringProperty("")
+
+    total_hours_work_statistic = StringProperty()
+    total_minutes_work_statistic = StringProperty()
+
+    list_from_total_days = ListProperty()
+    list_to_total_days = ListProperty()
+
+    day_spinner_str = StringProperty(CURRENT_DAY)
+    month_spinner_str = StringProperty(CURRENT_MONTH)
+
+    spinner_month_lst = ListProperty(month_lst)
+    spinner_month_statistic_lst = ListProperty()  # Устан.всех месяцев в Spinner
+
+    spinner_statistic_month_lst = ListProperty([])  # Устан.всех месяцев в Spinner
+
+    def __init__(self, **kwargs):
+        MDScreen.__init__(self,**kwargs)
 
 
 
@@ -465,21 +497,33 @@ class Pages(Carousel):
 
 
 
-
-
-
-
-
-
-class MyApp(App):
+class MyApp(MDApp):
     def build(self):
-        self.title = "Паши дурачёк, получишь значёк"
-        Window.clearcolor = (.8, .8, .8)
-
-        return Pages()
-
+        self.theme_cls.theme_style = "Light"  # Light Dark
+        self.theme_cls.primary_palette = "Olive"  # "Teal" #"Purple" # , "Red" "Olive"
+        # Window.clearcolor = (.8, .8, .8)
+        Builder.load_file(os.path.join(dir_name[0], "main_kv.kv"))
+        scm = PagesManager()
+        scm.add_widget(Pages_main())
+        scm.add_widget(Pages_stat())
+        return scm
     def quit_program(self):
         exit()
+
+class RouteTextInput(MDTextField):
+    def __init__(self, **kwargs):
+        MDTextField.__init__(self, **kwargs)
+    def insert_text(self, value, from_undo=False):
+        if value.isdigit():
+            if len(self.text) < 3:
+                return super().insert_text(value, from_undo=from_undo)
+class KartaTextInput(MDTextField):
+    def __init__(self, **kwargs):
+        MDTextField.__init__(self, **kwargs)
+    def insert_text(self, value, from_undo=False):
+        if value.isdigit():
+            if len(self.text) < 2:
+                return super().insert_text(value, from_undo=from_undo)
 
 if __name__ == '__main__':
     MyApp().run()
