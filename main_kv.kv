@@ -74,19 +74,17 @@
                         TimeSpinner:
                             id: spinner_day
                             size_hint: 1, 1
-                            # pos_hint: {"top":1}
-
-                            text: "27"# "root.day_spinner_str"
+                            text: root.day_spinner
                             values: map(str,list(range(1,32)))
-                            on_text: root.create_a_date_for_label()
+                            # on_text: root.create_a_date_for_label()
                     MDBoxLayout:
                         size_hint_y: .4
                         TimeSpinner:
                             id: spinner_month
                             font_size: 30
-                            text:  "Сентябрь"# "root.month_spinner_str"
-                            # values: root.spinner_month_lst
-                            on_text: root.create_a_date_for_label()
+                            text:  root.month_spinner_str
+                            values: root.month_spinner_lst
+                            # on_text: root.create_a_date_for_label()
                 TimeBox:
                     size_hint_y: .2
                     MDBoxLayout:
@@ -97,8 +95,8 @@
                     MDBoxLayout:
                         TimeSpinner:
                             id: hourstartlunch
-    #                        text: root.hours_start_lunch
-    #                        values: [str(x) for x in range(1,25)]
+                            text: root.hours_start_lunch
+                            values: [str(x) for x in range(1,25)]
                             on_text: root.create_start_work_time(self)
                         TitleLabel:
                             size_hint: .1, 1
@@ -109,9 +107,9 @@
 
                         TimeSpinner:
                             id: minutestartlunch
-    #                        text: root.minutes_start_lunch
-    #                        values: [str(x).zfill(2) for x in range(0,60)]
-    #                        on_text: root.create_start_work_time(self)
+                            text: root.minutes_start_lunch
+                            values: [str(x).zfill(2) for x in range(0,60)]
+                            # on_text: root.create_start_work_time(self)
                 TimeBox:
                     size_hint_y: .2
                     MDBoxLayout:
@@ -256,6 +254,7 @@
                         text: ""
                         mode: "outlined"
                         multiline: False
+                        font_size: 40
                         MDTextFieldHintText:
                             text: "Маршрут"
                             text_color_normal: "brown"
@@ -265,6 +264,7 @@
                         text: ""
                         mode: "outlined"
                         multiline: False
+                        font_size: 40
                         MDTextFieldHintText:
                             text: "Карта"
                             text_color_normal: "brown"
@@ -285,6 +285,7 @@
                 MDBoxLayout:
                     padding:[0,0,sp(10),0]
                     Button_main:
+                        on_release: root.intercept_data_main_screen()
                         Button_text:
                             text: "Сохранить"
                 MDBoxLayout:
@@ -312,7 +313,7 @@
         orientation: "vertical"
         MDBoxLayout:
             padding: [sp(10),sp(10),sp(10),0]
-            size_hint_y: .1
+            size_hint_y: .25
             TimeSpinner:
                 id: spinner_day
                 size_hint: .3, 1
@@ -337,7 +338,41 @@
                 values: map(str,list(range(1,32)))
                 on_text: root.create_a_date_for_label()
         MDBoxLayout:
-            size_hint_y: .9
+            id: TwoBoxStat
+            size_hint: 1, 1
+            # md_bg_color: .1,1,.1
+            padding: sp(10)
+            MDCard:
+                orientation: "vertical"
+                size_hint: 1, 1
+                # elevation: 20
+                MDLabel:
+                    text_size: self.size
+                    theme_font_size: "Custom"
+                    font_size: sp(20)
+                    bold:True
+                    padding: sp(10)
+                    size_hint: 1,.06
+                    text: "Месяц"
+                    valign: "center"
+                    halign: "center"
+                MDLabel:
+                    id: card_label_id
+                    text_size: self.size
+                    theme_font_size: "Custom"
+                    font_size: sp(15)
+                    bold:True
+                    spacing: sp(10)
+                    padding: sp(10)
+                    size_hint: 1,1
+                    text:  "root.strig_statistic_for_label"
+                    valign: "top"
+
+        MDBoxLayout:
+            Button:
+                text: "Кнопка"
+        MDBoxLayout:
+            size_hint_y: .5
 
 
 

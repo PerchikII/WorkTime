@@ -89,14 +89,23 @@ class PagesManager(MDScreenManager):
 
 class Pages_main(MDScreen):
     """Читай переменные. Их имена обо всём говорят."""
+    day_spinner = StringProperty(CURRENT_DAY)
+    month_spinner_str = StringProperty(CURRENT_MONTH)
+    month_spinner_lst = ListProperty(month_lst)
+
+    hours_start_lunch = StringProperty("00")
+    minutes_start_lunch = StringProperty("00")
+
+
+
+
     hours_start_work = StringProperty(INSTALL_TIME[0])
     minutes_start_work = StringProperty(INSTALL_TIME[1])
 
     hours_end_work = StringProperty(INSTALL_TIME[2])
     minutes_end_work = StringProperty(INSTALL_TIME[3])
 
-    hours_start_lunch = StringProperty(INSTALL_TIME[4])
-    minutes_start_lunch = StringProperty(INSTALL_TIME[5])
+
 
     hours_end_lunch = StringProperty(INSTALL_TIME[6])
     minutes_end_lunch = StringProperty(INSTALL_TIME[7])
@@ -121,10 +130,42 @@ class Pages_main(MDScreen):
         #self.main()
 
     def main(self):
-        self.file_dict = self.load_file_time_work() # Загрузка с HDD словаря
         self.update_statistic()
         if "down" in INSTALL_TIME:
             self.install_total_time_after_save()
+    def intercept_data_main_screen(self):
+        print("Начали")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def install_total_time_after_save(self):
         tuple_time = (self.hours_start_work, self.minutes_start_work, self.hours_end_work,
