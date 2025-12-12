@@ -83,10 +83,6 @@ class PagesManager(MDScreenManager):
                 self.transition.direction = "down"
                 self.current = "sett_page"
         return super(PagesManager, self).on_touch_up(touch)
-
-
-
-
 class Pages_main(MDScreen):
     """Читай переменные. Их имена обо всём говорят."""
     day_spinner = StringProperty(CURRENT_DAY)
@@ -108,19 +104,13 @@ class Pages_main(MDScreen):
     total_hours_work = StringProperty("00")
     total_minutes_work = StringProperty("00")
 
-    date_a_day = StringProperty("date_a_day")
+    date_total_time = StringProperty(CURRENT_DAY + " " + CURRENT_MONTH)
 
     lab_save_txt = StringProperty("Отработано:")
     key_dict_total_data = CURRENT_DAY + " " + CURRENT_MONTH
 
     def __init__(self, **kwargs):
         MDScreen.__init__(self,**kwargs)
-        # self.ids["check_save_time"].state = INSTALL_TIME[8]
-        self.value_dict_total_time_work = "0:0"
-        self.all_work_num_days_for_statistic = [] # Рабочие дни выбранного месяца
-        self.all_month_for_statistic = [] # Все месяцы из словаря
-        self.keys_all_work_data_sorted = []
-        self.file_dict = {}
         #self.main()
 
     def main(self):
@@ -137,17 +127,81 @@ class Pages_main(MDScreen):
 
     def start_calculate_work_time(self):
         # Начало раб.дня
-        start_work = self.ids["startworkhours"].text
-        print(self.ids["startworkminutes"].text)
+        start_work_H = self.ids["startworkhours"].text
+        start_work_M = self.ids["startworkminutes"].text
         # Конец раб.дня
-        print(self.ids["hoursendwork"].text)
-        print(self.ids["minutesendwork"].text)
+        end_work_H = self.ids["hoursendwork"].text
+        end_work_M = self.ids["minutesendwork"].text
         # Обед начало
-        print(self.ids["hoursstartlunch"].text)
-        print(self.ids["minutesstartlunch"].text)
+        start_lunch_H = self.ids["hoursstartlunch"].text
+        start_lunch_M = self.ids["minutesstartlunch"].text
         # Обед конец
-        print(self.ids["hoursendlunch"].text)
-        print(self.ids["minutesendlunch"].text)
+        end_lunch_H = self.ids["hoursendlunch"].text
+        end_lunch_M = self.ids["minutesendlunch"].text
+
+        time_tuple = (start_work_H,start_work_M,end_work_H,end_work_M,start_lunch_H,start_lunch_M,end_lunch_H,end_lunch_M)
+        if int(start_work_H) > int(end_work_H):
+            total_time_work = self.calculate_time_more_day(time_tuple)
+        else:
+            total_time_work = self.calculate_time_less_day(time_tuple)
+        self.install_total_time_work_in_label(total_time_work)
+
+    def install_total_time_work_in_label(self,total_time_work):
+        time_struct = time.gmtime(total_time_work.total_seconds())
+        self.total_hours_work = str(time_struct.tm_hour)
+        self.total_minutes_work = str(time_struct.tm_min)
+        day = self.ids["spinner_day"].text
+        month = self.ids["spinner_month"].text
+        self.date_total_time = day+ " "+ month
+
+
+    @staticmethod
+    def calculate_time_more_day(time_tuple):
+        day = timedelta(hours=24)
+        Hour_start_work = int(time_tuple[0])
+        Hour_end_work = int(time_tuple[2])
+        Min_start_work = int(time_tuple[1])
+        Min_end_work = int(time_tuple[3])
+
+        Hour_start_lunch = int(time_tuple[4])
+        Min_start_lunch = int(time_tuple[5])
+        Hour_end_lunch = int(time_tuple[6])
+        Min_end_lunch = int(time_tuple[7])
+
+        time_start_lunch = timedelta(hours=Hour_start_lunch, minutes=Min_start_lunch)
+        time_end_lunch = timedelta(hours=Hour_end_lunch, minutes=Min_end_lunch)
+        total_time_lunch = time_end_lunch - time_start_lunch
+
+        time_start_work = timedelta(hours=Hour_start_work, minutes=Min_start_work)
+        time_end_work = timedelta(hours=Hour_end_work, minutes=Min_end_work)
+
+        diff_hours_with_day = day - time_start_work
+        total = diff_hours_with_day + time_end_work
+        total_time_more_day_work = total - total_time_lunch
+        return total_time_more_day_work
+    @staticmethod
+    def calculate_time_less_day(time_args):
+        Hour_start_work = int(time_args[0])
+        Hour_end_work = int(time_args[2])
+        Min_start_work = int(time_args[1])
+        Min_end_work = int(time_args[3])
+
+        Hour_start_lunch = int(time_args[4])
+        Min_start_lunch = int(time_args[5])
+        Hour_end_lunch = int(time_args[6])
+        Min_end_lunch = int(time_args[7])
+
+        time_start_lunch = timedelta(hours=Hour_start_lunch, minutes=Min_start_lunch)
+        time_end_lunch = timedelta(hours=Hour_end_lunch, minutes=Min_end_lunch)
+        total_time_lunch = time_end_lunch - time_start_lunch
+
+        time_start_work = timedelta(hours=Hour_start_work, minutes=Min_start_work)
+        time_end_work = timedelta(hours=Hour_end_work, minutes=Min_end_work)
+        total_time_less_day_work = (time_end_work - time_start_work) - total_time_lunch
+        return total_time_less_day_work
+
+
+
 
     @staticmethod
     def create_KEY(day,month):
@@ -307,38 +361,6 @@ class Pages_main(MDScreen):
         list_keys = self.create_keys_date_choice_month(list_num_choice_month,choice_month) # Список ключей
         return list_keys
 
-    def create_start_work_time(self,spinner):
-        match spinner.uid:
-            case  116:
-                self.hours_start_work = spinner.text
-                #print(spinner.uid,self.hours_start_work)
-            case  157:
-                self.minutes_start_work = spinner.text
-                #print(spinner.uid, self.minutes_start_work)
-            case  290:
-                self.hours_end_work = spinner.text
-                #print(spinner.uid, self.hours_end_work)
-            case  331:
-                self.minutes_end_work = spinner.text
-                #print(spinner.uid, self.minutes_end_work)
-            case  204:
-                self.hours_start_lunch = spinner.text
-                #print(spinner.uid, self.hours_start_lunch)
-            case  245:
-                self.minutes_start_lunch = spinner.text
-                #print(spinner.uid, self.minutes_start_lunch)
-            case  378:
-                self.hours_end_lunch = spinner.text
-                #print(spinner.uid, self.hours_end_lunch)
-            case  419:
-                self.minutes_end_lunch = spinner.text
-                #print(spinner.uid, self.minutes_end_lunch)
-
-        self.ids["check_save_time"].state = "normal"
-        tuple_time = (self.hours_start_work, self.minutes_start_work, self.hours_end_work,
-                    self.minutes_end_work, self.hours_start_lunch, self.minutes_start_lunch,
-                    self.hours_end_lunch, self.minutes_end_lunch)
-        self.work_time_calc(tuple_time)
 
     def my_callback(self,instance):
         self.lab_save_txt = "Отработано:"
@@ -353,87 +375,12 @@ class Pages_main(MDScreen):
         print(self.file_dict)
 
 
-    def load_file_time_work(self):
-        try:
-            with open("data_base.dat", 'rb') as file:
-                file_dict = pickle.load(file)
-                print("Открыт успешно",file_dict)
-
-        except (IOError,EOFError,FileNotFoundError):
-            print("Не открылся. Создался пустой")
-            with open(os.path.join(dir_name[0], "data_base.dat"), 'wb'): pass
-            file_dict = {}
-
-        return file_dict
-
-    def work_less_day(self,time_args):
-        Hour_start_work = int(time_args[0])
-        Hour_end_work = int(time_args[2])
-        Min_start_work = int(time_args[1])
-        Min_end_work = int(time_args[3])
-
-        Hour_start_lunch = int(time_args[4])
-        Min_start_lunch = int(time_args[5])
-        Hour_end_lunch = int(time_args[6])
-        Min_end_lunch = int(time_args[7])
-
-        time_start_lunch = timedelta(hours=Hour_start_lunch, minutes=Min_start_lunch)
-        time_end_lunch = timedelta(hours=Hour_end_lunch, minutes=Min_end_lunch)
-        total_time_lunch = time_end_lunch - time_start_lunch
-
-        time_start_work = timedelta(hours=Hour_start_work, minutes=Min_start_work)
-        time_end_work = timedelta(hours=Hour_end_work, minutes=Min_end_work)
-        total_time_less_day_work = (time_end_work - time_start_work) - total_time_lunch
-
-        return total_time_less_day_work
-
-    def work_more_day(self,time_args):
-        day = timedelta(hours=24)
-        Hour_start_work = int(time_args[0])
-        Hour_end_work = int(time_args[2])
-        Min_start_work = int(time_args[1])
-        Min_end_work = int(time_args[3])
-
-        Hour_start_lunch = int(time_args[4])
-        Min_start_lunch = int(time_args[5])
-        Hour_end_lunch = int(time_args[6])
-        Min_end_lunch = int(time_args[7])
-
-        time_start_lunch = timedelta(hours=Hour_start_lunch, minutes=Min_start_lunch)
-        time_end_lunch = timedelta(hours=Hour_end_lunch, minutes=Min_end_lunch)
-        total_time_lunch = time_end_lunch - time_start_lunch
-
-        time_start_work = timedelta(hours=Hour_start_work, minutes=Min_start_work)
-        time_end_work = timedelta(hours=Hour_end_work, minutes=Min_end_work)
-
-        diff_hours_with_day = day - time_start_work
-        total = diff_hours_with_day + time_end_work
-
-        total_time_more_day_work = total - total_time_lunch
-
-        return total_time_more_day_work
-
-    def work_time_calc(self, time_args):
-        """" В ф-ции расчитывается время отработки """
-
-        if int(time_args[0])>int(time_args[2]):
-            total_time_work = self.work_more_day(time_args)
-        else:
-            total_time_work = self.work_less_day(time_args)
-        self.create_value_for_dict(total_time_work)
 
 
 
-    def create_value_for_dict(self,total_time_work):
-        """self.value_dict_total_time_work = формируется строка значений для словаря.
-        "4:33" часы, минуты"""
-        if len(str(total_time_work)) == 8:
-            self.total_hours_work = str(total_time_work)[:2]
-        else:
-            self.total_hours_work = str(total_time_work)[0]
 
-        self.total_minutes_work = str(total_time_work)[-5:-3]
-        self.value_dict_total_time_work = self.total_hours_work + ":" + self.total_minutes_work
+
+
 
     def create_a_date_for_label(self):
         """Формируется ключ для словаря
