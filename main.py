@@ -96,27 +96,21 @@ class Pages_main(MDScreen):
     hours_start_lunch = StringProperty("00")
     minutes_start_lunch = StringProperty("00")
 
+    hours_end_lunch = StringProperty("00")
+    minutes_end_lunch = StringProperty("00")
 
+    hours_start_work = StringProperty("00")
+    minutes_start_work = StringProperty("00")
 
-
-    hours_start_work = StringProperty(INSTALL_TIME[0])
-    minutes_start_work = StringProperty(INSTALL_TIME[1])
-
-    hours_end_work = StringProperty(INSTALL_TIME[2])
-    minutes_end_work = StringProperty(INSTALL_TIME[3])
-
-
-
-    hours_end_lunch = StringProperty(INSTALL_TIME[6])
-    minutes_end_lunch = StringProperty(INSTALL_TIME[7])
+    hours_end_work = StringProperty("00")
+    minutes_end_work = StringProperty("00")
 
     total_hours_work = StringProperty("00")
     total_minutes_work = StringProperty("00")
 
+    date_a_day = StringProperty("date_a_day")
+
     lab_save_txt = StringProperty("Отработано:")
-
-    label_month_lst = ListProperty([CURRENT_DAY, CURRENT_MONTH])  # Устан.даты в Label
-
     key_dict_total_data = CURRENT_DAY + " " + CURRENT_MONTH
 
     def __init__(self, **kwargs):
@@ -133,10 +127,31 @@ class Pages_main(MDScreen):
         self.update_statistic()
         if "down" in INSTALL_TIME:
             self.install_total_time_after_save()
+
     def intercept_data_main_screen(self):
-        print("Начали")
+        # Дата
+        day = self.ids["spinner_day"].text
+        month = self.ids["spinner_month"].text
+        data_key = self.create_KEY(day,month)
+        print(data_key)
 
+    def start_calculate_work_time(self):
+        # Начало раб.дня
+        start_work = self.ids["startworkhours"].text
+        print(self.ids["startworkminutes"].text)
+        # Конец раб.дня
+        print(self.ids["hoursendwork"].text)
+        print(self.ids["minutesendwork"].text)
+        # Обед начало
+        print(self.ids["hoursstartlunch"].text)
+        print(self.ids["minutesstartlunch"].text)
+        # Обед конец
+        print(self.ids["hoursendlunch"].text)
+        print(self.ids["minutesendlunch"].text)
 
+    @staticmethod
+    def create_KEY(day,month):
+        return day+ " "+month
 
 
 
@@ -524,10 +539,10 @@ class Pages_stat(MDScreen):
     day_spinner_str = StringProperty(CURRENT_DAY)
     month_spinner_str = StringProperty(CURRENT_MONTH)
 
-    spinner_month_lst = ListProperty(month_lst)
+    label_month_lst = ListProperty([CURRENT_DAY, CURRENT_MONTH])  # Устан.даты в Label
+
     spinner_month_statistic_lst = ListProperty()  # Устан.всех месяцев в Spinner
 
-    spinner_statistic_month_lst = ListProperty([])  # Устан.всех месяцев в Spinner
 
     def __init__(self, **kwargs):
         MDScreen.__init__(self,**kwargs)

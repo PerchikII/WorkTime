@@ -32,9 +32,9 @@
             rectangle: self.x,self.y,self.width,self.height
 <TimeSpinner@Spinner>
     size_hint: 1, 1
-    pos_hint: {"right":1,"top":1}
+    # pos_hint: {"right":1,"top":1}
     font_size: 50
-    text: "00"
+
 <TitleLabel@MDLabel>
     size_hint: 1, 1
     # font_size: 30
@@ -73,18 +73,17 @@
                             text: "Дата"
                         TimeSpinner:
                             id: spinner_day
-                            size_hint: 1, 1
                             text: root.day_spinner
                             values: map(str,list(range(1,32)))
-                            # on_text: root.create_a_date_for_label()
+                            on_text: pass
                     MDBoxLayout:
                         size_hint_y: .4
                         TimeSpinner:
                             id: spinner_month
-                            font_size: 30
                             text:  root.month_spinner_str
                             values: root.month_spinner_lst
-                            # on_text: root.create_a_date_for_label()
+                            font_size: 30
+                            on_text: pass
                 TimeBox:
                     size_hint_y: .2
                     MDBoxLayout:
@@ -94,22 +93,18 @@
                             text: "     установите \nНАЧАЛО ОБЕДА"
                     MDBoxLayout:
                         TimeSpinner:
-                            id: hourstartlunch
+                            id: hoursstartlunch
                             text: root.hours_start_lunch
                             values: [str(x) for x in range(1,25)]
-                            on_text: root.create_start_work_time(self)
+                            on_text: root.start_calculate_work_time()
                         TitleLabel:
                             size_hint: .1, 1
-                            pos_hint: {"right":1,"top":1}
-                            font_size: 50
                             text: ":"
-                            color: 0,0,0
-
                         TimeSpinner:
-                            id: minutestartlunch
+                            id: minutesstartlunch
                             text: root.minutes_start_lunch
                             values: [str(x).zfill(2) for x in range(0,60)]
-                            # on_text: root.create_start_work_time(self)
+                            on_text: root.start_calculate_work_time()
                 TimeBox:
                     size_hint_y: .2
                     MDBoxLayout:
@@ -121,38 +116,36 @@
                     MDBoxLayout:
                         TimeSpinner:
                             id: hoursendlunch
-    #                        text: root.hours_end_lunch
-    #                        values: [str(x) for x in range(1,25)]
-    #                        on_text: root.create_start_work_time(self)
+                            text: root.hours_end_lunch
+                            values: [str(x) for x in range(1,25)]
+                            on_text: root.start_calculate_work_time()
                         TitleLabel:
                             size_hint: .1, 1
-                            pos_hint: {"right":1,"bottom":1}
-                            font_size: 50
                             text: ":"
-                            color: 0,0,0
                         TimeSpinner:
                             id: minutesendlunch
-    #                        text: root.minutes_end_lunch
-    #                        values: [str(x).zfill(2) for x in range(0,60)]
-    #                        on_text: root.create_start_work_time(self)
+                            text: root.minutes_end_lunch
+                            values: [str(x).zfill(2) for x in range(0,60)]
+                            on_text: root.start_calculate_work_time()
                 TimeBox:
                     size_hint_y: .3
                     MDBoxLayout:
                         size_hint_y: .15
                         TitleLabel:
+                            id: root.date_a_day
                             text: "9 Декабрь"
                             role: "large"
                     MDBoxLayout:
                         size_hint_y: .15
                         TitleLabel:
-                            text: "Отработано:"
+                            text: root.lab_save_txt
                             role: "large"
                             halign: "left"
                     MDBoxLayout:
                         size_hint_y: .25
                         TitleLabel:
                             size_hint_x: .5
-                            text: "18"
+                            text: root.total_hours_work
                             font_style: "Headline"
                             role: "large"
                         TitleLabel:
@@ -163,7 +156,7 @@
                     MDBoxLayout:
                         size_hint_y: .25
                         TitleLabel:
-                            text: "29"
+                            text: root.total_minutes_work
                             font_style: "Headline"
                             role: "large"
                             halign: "right"
@@ -185,22 +178,18 @@
                             text: "установите НАЧАЛО\n      рабочего дня"
                     MDBoxLayout:
                         TimeSpinner:
-                            id: startworkhour
-    #                        text: root.hours_start_work
-    #                        values: [str(x) for x in range(1,25)]
-                            on_text: root.create_start_work_time(self)
+                            id: startworkhours
+                            text: root.hours_start_work
+                            values: [str(x) for x in range(1,25)]
+                            on_text: root.start_calculate_work_time()
                         TitleLabel:
                             size_hint: .1, 1
-                            pos_hint: {"right":1,"bottom":1}
-                            font_size: 50
                             text: ":"
-                            color: 0,0,0
                         TimeSpinner:
-                            id: startworkminute
+                            id: startworkminutes
                             text: root.minutes_start_work
                             values: [str(x).zfill(2) for x in range(0,60)]
-                            on_text: root.create_start_work_time(self)
-
+                            on_text: root.start_calculate_work_time()
                 TimeBox:
                     padding: 5
                     orientation: "vertical"
@@ -210,21 +199,19 @@
                             text: "установите КОНЕЦ\n      рабочего дня"
                     MDBoxLayout:
                         TimeSpinner:
-                            id: hourendwork
-    #                        text: root.hours_end_work
-    #                        values: [str(x) for x in range(1,25)]
-    #                        on_text: root.create_start_work_time(self)
+                            id: hoursendwork
+                            text: root.hours_end_work
+                            values: [str(x) for x in range(1,25)]
+                            on_text: root.start_calculate_work_time()
+
                         TitleLabel:
                             size_hint: .1, 1
-                            pos_hint: {"right":1,"top":1}
-                            font_size: 50
                             text: ":"
-                            color: 0,0,0
                         TimeSpinner:
                             id: minutesendwork
-    #                        text: root.minutes_end_work
-    #                        values: [str(x).zfill(2) for x in range(0,60)]
-    #                        on_text: root.create_start_work_time(self)
+                            text: root.minutes_end_work
+                            values: [str(x).zfill(2) for x in range(0,60)]
+                            on_text: root.start_calculate_work_time()
                 TimeBox:
                     padding: 5
                     orientation: "vertical"
@@ -239,11 +226,9 @@
                         size_hint:1,1
                         TitleLabel:
                             text: "запомнить время"
-                            color: 0,0,0
-                            font_size: 20
                             font_style: "Body"
                             role: "small"
-                        CheckBox:
+                        CheckBox:####################################################################################
                             id: check_save_time
                             color: 0,0,0
                             size_hint_x: .5
@@ -251,6 +236,7 @@
                 TimeBox:
                     orientation: "vertical"
                     RouteTextInput:
+                        id: route_number_textinput
                         text: ""
                         mode: "outlined"
                         multiline: False
@@ -261,6 +247,7 @@
 
 
                     KartaTextInput:
+                        id: karta_route_number_textinput
                         text: ""
                         mode: "outlined"
                         multiline: False
@@ -317,7 +304,6 @@
             TimeSpinner:
                 id: spinner_day
                 size_hint: .3, 1
-                # pos_hint: {"top":1}
                 text: "27"# "root.day_spinner_str"
                 values: map(str,list(range(1,32)))
                 on_text: root.create_a_date_for_label()
