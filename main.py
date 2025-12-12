@@ -7,6 +7,7 @@ import time
 import os
 from datetime import timedelta
 import pickle
+from pprint import pprint
 
 from kivymd.app import MDApp
 from kivy.uix.popup import Popup
@@ -23,24 +24,44 @@ from kivy.properties import ListProperty,StringProperty
 from kivy.clock import Clock
 from kivy.core.window import Window
 
-def install_time_in_stringproperty():
-    directory = os.path.dirname(os.path.abspath(__file__))
-    try:
-        with open("file_save_time.txt") as f:
-            file_open = f.readlines()
-    except (FileNotFoundError,ValueError):
-        with open(os.path.join(directory,"file_save_time.txt"), "w") as file_open:
-            for i in range(8):
-                file_open.write("00" + "\n")
-            file_open.write("normal")
-        with open("file_save_time.txt") as f:
-            file_open = f.readlines()
-    return file_open
+# def install_time_in_stringproperty():
+#     directory = os.path.dirname(os.path.abspath(__file__))
+#     try:
+#         with open("file_save_time.txt") as f:
+#             file_open = f.readlines()
+#     except (FileNotFoundError,ValueError):
+#         with open(os.path.join(directory,"file_save_time.txt"), "w") as file_open:
+#             for i in range(8):
+#                 file_open.write("00" + "\n")
+#             file_open.write("normal")
+#         with open("file_save_time.txt") as f:
+#             file_open = f.readlines()
+#     return file_open
+#
+# INSTALL_TIME = [x.rstrip() for x in install_time_in_stringproperty()]
 
-INSTALL_TIME = [x.rstrip() for x in install_time_in_stringproperty()]
-
-"""Установить kv файл в директорию совместно в main.py"""
 dir_name = os.path.split(os.path.abspath(__file__))
+def load_HDDfile():
+    try:
+        with open("statistic_data.dat", 'rb') as file:
+            file_dict = pickle.load(file)
+            return file_dict
+    except (FileNotFoundError, IOError, EOFError):
+        # Код одноразовый для первого запуска программы
+        print("Не открылся. Создался пустой")
+        with open(os.path.join(dir_name[0], "statistic_data.dat"), 'wb') as obj:
+            file_dict = {}
+            pickle.dump(file_dict, obj)
+    return file_dict
+
+def save_HDD_DICT_TIME(dictionary,name_file):
+    with open("worktime_data.dat", 'wb') as file:
+        pickle.dump(dictionary, file)
+
+DICT_TIME_STATISTIC = load_HDDfile()
+# DICT_ROUT = load_HDDfile()
+
+
 
 
 month_lst = ['Январь', 'Февраль', 'Март', 'Апрель','Май', 'Июнь',
@@ -111,6 +132,7 @@ class Pages_main(MDScreen):
 
     def __init__(self, **kwargs):
         MDScreen.__init__(self,**kwargs)
+        self.route_and_time = ["route",()]
         #self.main()
 
     def main(self):
@@ -119,11 +141,55 @@ class Pages_main(MDScreen):
             self.install_total_time_after_save()
 
     def intercept_data_main_screen(self):
-        # Дата
+        date_choice_user:str = self.get_user_choice_date()
+        total_time:tuple[str,str] = self.get_total_time_in_a_day()
+        route_and_karta_in_day:str = self.get_route_user_choice()
+
+        self.save_date_in_time_dict(date_choice_user,route_and_karta_in_day,total_time)
+
+
+        # print(date_choice_user,route_and_karta_in_day,total_time)
+
+    def save_date_in_time_dict(self,key:str,route:str,tot_time:tuple[str,str]):
+
+        self.route_and_time[0] = route
+        self.route_and_time[1] = tot_time
+        DICT_TIME_STATISTIC[key] = self.route_and_time
+        # self.save_date_in_HDD(DICT_TIME_STATISTIC)
+        pprint(DICT_TIME_STATISTIC)
+
+
+    @staticmethod
+    def save_date_in_HDD(global_dict):
+        save_HDD_DICT_TIME(global_dict,"worktime_data.dat")
+
+
+    def get_route_user_choice(self):
+        route = self.ids["route_number_textinput"].text
+        karta = self.ids["karta_route_number_textinput"].text
+        if route and karta:
+            return route + "/" + karta
+        else:
+            return "Не введён"
+
+
+
+    def get_total_time_in_a_day(self):
+        hours = self.total_hours_work
+        mitutes = self.total_minutes_work
+        return hours,mitutes
+
+
+    def get_user_choice_date(self):
         day = self.ids["spinner_day"].text
         month = self.ids["spinner_month"].text
-        data_key = self.create_KEY(day,month)
-        print(data_key)
+        return day + " " + month
+
+
+
+
+
+
 
     def start_calculate_work_time(self):
         # Начало раб.дня
@@ -145,7 +211,6 @@ class Pages_main(MDScreen):
         else:
             total_time_work = self.calculate_time_less_day(time_tuple)
         self.install_total_time_work_in_label(total_time_work)
-
     def install_total_time_work_in_label(self,total_time_work):
         time_struct = time.gmtime(total_time_work.total_seconds())
         self.total_hours_work = str(time_struct.tm_hour)
@@ -153,8 +218,6 @@ class Pages_main(MDScreen):
         day = self.ids["spinner_day"].text
         month = self.ids["spinner_month"].text
         self.date_total_time = day+ " "+ month
-
-
     @staticmethod
     def calculate_time_more_day(time_tuple):
         day = timedelta(hours=24)
@@ -200,12 +263,6 @@ class Pages_main(MDScreen):
         total_time_less_day_work = (time_end_work - time_start_work) - total_time_lunch
         return total_time_less_day_work
 
-
-
-
-    @staticmethod
-    def create_KEY(day,month):
-        return day+ " "+month
 
 
 
