@@ -9,11 +9,10 @@ from datetime import timedelta
 import pickle
 from pprint import pprint
 
-from PIL.features import check
+
 from kivymd.app import MDApp
 from kivy.uix.popup import Popup
 from kivymd.uix.label import MDLabel
-from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.uix.button import Button
 from kivymd.uix.screenmanager import MDScreenManager
 from kivy.uix.screenmanager import SlideTransition
@@ -157,11 +156,11 @@ class Pages_main(MDScreen):
         check_key = self.check_day_in_dict(key)
         if check_key:
             MyPoput(message_the_same_day,key,self.route_and_time)
-
-
-        DICT_TIME_STATISTIC[key] = self.route_and_time
+        else:
+            DICT_TIME_STATISTIC[key] = self.route_and_time
 
         # save_HDD_DICT_TIME(DICT_TIME_STATISTIC, "worktime_data.dat")
+        print("##########################")
         pprint(DICT_TIME_STATISTIC)
 
 
@@ -615,41 +614,21 @@ class KartaTextInput(MDTextField):
 
 
 class MyPoput(Popup):
+    message_info = StringProperty("")
     def __init__(self,message,key,work_time,**kwargs):
         Popup.__init__(self,**kwargs)
-        self.message = message
+        self.message_info = message
         self.key = key
         self.work_time = work_time
-        self.title="Внимание!"
-        self.size_hint = (.9,.5)
-        self.pos_hint = {"x_center": 1,"y": .5}
-
-        self.content = MDScreen()
-        self.box = MDBoxLayout(orientation="vertical")
-        self.box.add_widget(MDLabel(text=self.message,
-                                    size_hint=(1, 1),
-                                    theme_text_color="Custom",
-                                    text_color="white",
-                                    text_size=self.size,
-                                    halign="center"))
-        self.box.add_widget(Button(text="Переписать",font_size = 20,size_hint= (.5,.5),
-                                   pos_hint={"center_x": 0.5, "center_y":1},
-                                   on_release=self.answer_ok))
-        self.box.add_widget(Button(text="Отмена",font_size = 30,size_hint= (.5,.5),
-                                   pos_hint={"center_x": 0.5, "center_y": 1},
-                                   on_release=self.answer_no))
-        self.content.add_widget(self.box)
-        self.content.pos_hint = {"x_center": .5,
-                                 "y_center": .5}
         self.open()
 
-    def answer_ok(self,arg):
+    def answer_ok(self):
         DICT_TIME_STATISTIC[self.key] = self.work_time
-        print("poput")
+        print("poput answer")
         pprint(DICT_TIME_STATISTIC)
 
-    def answer_no(self,arg):
-        self.dismiss()
+
+
 
 if __name__ == '__main__':
     MyApp().run()
