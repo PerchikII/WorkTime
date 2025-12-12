@@ -60,6 +60,7 @@ def save_HDD_DICT_TIME(dictionary,name_file):
         pickle.dump(dictionary, file)
 
 DICT_TIME_STATISTIC = load_HDDfile()
+# DICT_TIME_STATISTIC = {}
 # DICT_ROUT = load_HDDfile()
 
 
@@ -154,32 +155,13 @@ class Pages_main(MDScreen):
         self.route_and_time[0] = route
         self.route_and_time[1] = tot_time
         check_key = self.check_day_in_dict(key)
+        print(check_key)
         if check_key:
             MyPoput(message_the_same_day,key,self.route_and_time)
         else:
             DICT_TIME_STATISTIC[key] = self.route_and_time
-
-        # save_HDD_DICT_TIME(DICT_TIME_STATISTIC, "worktime_data.dat")
-        print("##########################")
-        pprint(DICT_TIME_STATISTIC)
-
-
-    # def rewrite_or_cancel_poput(self):
-    #     def answer_ok(instance):
-    #         if instance.text == "Ok":
-    #             self.overwriting()
-    #             mynepopup.dismiss()
-    #         elif instance.text == "Cancel":
-    #             mynepopup.dismiss()
-
-
-
-
-
-        return
-
-
-
+            save_HDD_DICT_TIME(DICT_TIME_STATISTIC, "worktime_data.dat")
+            print("end else")
 
 
     @staticmethod
@@ -456,7 +438,7 @@ class Pages_main(MDScreen):
         Clock.schedule_once(self.my_callback, 2)
         self.lab_save_txt = "Сохранено"
         self.update_statistic()
-        print(self.file_dict)
+
 
 
 
@@ -491,31 +473,6 @@ class Pages_main(MDScreen):
         time_work = self.value_dict_total_time_work
         self.file_dict[data] = time_work
         self.write_file_time_work()
-
-    def write_or_cancel_poput(self):
-        def answer_ok(instance):
-            if instance.text == "Ok":
-                self.overwriting()
-                mynepopup.dismiss()
-            elif instance.text == "Cancel":
-                mynepopup.dismiss()
-        mynepopup = Popup(title = "Info",size_hint = (.8, .4))
-        container = FloatLayout(size_hint=(1, 1))
-        lab = MDLabel(text="Рабочий день на эту дату существует.\n Переписать?",
-                    font_size=30, size_hint=(1, .3), pos_hint={'x': .001, 'top': 1},
-                    halign='center')
-        container.add_widget(lab)
-        btn_ok = Button(text="Ok", size_hint=(.3, .3),
-                        pos_hint={'x': .15, 'y': .1})
-        btn_ok.bind(on_press=answer_ok)
-        container.add_widget(btn_ok)
-        btn_cancel = Button(text="Cancel", size_hint=(.3, .3),
-                            pos_hint={'x': .55, 'y': .1})
-        btn_cancel.bind(on_press=answer_ok)
-        container.add_widget(btn_cancel)
-        mynepopup.content = container
-        mynepopup.open()  # Запустить Poput
-        return
 
     def btn_weekend(self):
         """Установка всех spinner в значение '00'- выходной день"""
@@ -625,8 +582,8 @@ class MyPoput(Popup):
     def answer_ok(self):
         DICT_TIME_STATISTIC[self.key] = self.work_time
         print("poput answer")
+        save_HDD_DICT_TIME(DICT_TIME_STATISTIC, "worktime_data.dat")
         pprint(DICT_TIME_STATISTIC)
-
 
 
 
