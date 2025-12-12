@@ -9,9 +9,11 @@ from datetime import timedelta
 import pickle
 from pprint import pprint
 
+from PIL.features import check
 from kivymd.app import MDApp
 from kivy.uix.popup import Popup
 from kivymd.uix.label import MDLabel
+from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.uix.button import Button
 from kivymd.uix.screenmanager import MDScreenManager
 from kivy.uix.screenmanager import SlideTransition
@@ -63,6 +65,7 @@ DICT_TIME_STATISTIC = load_HDDfile()
 
 
 
+message_the_same_day = """Рабочий день на эту дату существует.\n Переписать?"""
 
 month_lst = ['Январь', 'Февраль', 'Март', 'Апрель','Май', 'Июнь',
              'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
@@ -146,22 +149,47 @@ class Pages_main(MDScreen):
         route_and_karta_in_day:str = self.get_route_user_choice()
 
         self.save_date_in_time_dict(date_choice_user,route_and_karta_in_day,total_time)
-
-
         # print(date_choice_user,route_and_karta_in_day,total_time)
 
     def save_date_in_time_dict(self,key:str,route:str,tot_time:tuple[str,str]):
-
         self.route_and_time[0] = route
         self.route_and_time[1] = tot_time
+        check_key = self.check_day_in_dict(key)
+        if check_key:
+            MyPoput(message_the_same_day,key,self.route_and_time)
+
+
         DICT_TIME_STATISTIC[key] = self.route_and_time
-        # self.save_date_in_HDD(DICT_TIME_STATISTIC)
+
+        # save_HDD_DICT_TIME(DICT_TIME_STATISTIC, "worktime_data.dat")
         pprint(DICT_TIME_STATISTIC)
 
 
+    # def rewrite_or_cancel_poput(self):
+    #     def answer_ok(instance):
+    #         if instance.text == "Ok":
+    #             self.overwriting()
+    #             mynepopup.dismiss()
+    #         elif instance.text == "Cancel":
+    #             mynepopup.dismiss()
+
+
+
+
+
+        return
+
+
+
+
+
     @staticmethod
-    def save_date_in_HDD(global_dict):
-        save_HDD_DICT_TIME(global_dict,"worktime_data.dat")
+    def check_day_in_dict(key):
+        if key in DICT_TIME_STATISTIC:
+            return True
+        else:
+            return False
+
 
 
     def get_route_user_choice(self):
@@ -584,6 +612,44 @@ class KartaTextInput(MDTextField):
         if value.isdigit():
             if len(self.text) < 2:
                 return super().insert_text(value, from_undo=from_undo)
+
+
+class MyPoput(Popup):
+    def __init__(self,message,key,work_time,**kwargs):
+        Popup.__init__(self,**kwargs)
+        self.message = message
+        self.key = key
+        self.work_time = work_time
+        self.title="Внимание!"
+        self.size_hint = (.9,.5)
+        self.pos_hint = {"x_center": 1,"y": .5}
+
+        self.content = MDScreen()
+        self.box = MDBoxLayout(orientation="vertical")
+        self.box.add_widget(MDLabel(text=self.message,
+                                    size_hint=(1, 1),
+                                    theme_text_color="Custom",
+                                    text_color="white",
+                                    text_size=self.size,
+                                    halign="center"))
+        self.box.add_widget(Button(text="Переписать",font_size = 20,size_hint= (.5,.5),
+                                   pos_hint={"center_x": 0.5, "center_y":1},
+                                   on_release=self.answer_ok))
+        self.box.add_widget(Button(text="Отмена",font_size = 30,size_hint= (.5,.5),
+                                   pos_hint={"center_x": 0.5, "center_y": 1},
+                                   on_release=self.answer_no))
+        self.content.add_widget(self.box)
+        self.content.pos_hint = {"x_center": .5,
+                                 "y_center": .5}
+        self.open()
+
+    def answer_ok(self,arg):
+        DICT_TIME_STATISTIC[self.key] = self.work_time
+        print("poput")
+        pprint(DICT_TIME_STATISTIC)
+
+    def answer_no(self,arg):
+        self.dismiss()
 
 if __name__ == '__main__':
     MyApp().run()
