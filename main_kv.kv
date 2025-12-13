@@ -60,7 +60,7 @@
         MDBoxLayout:
 
             Button_main:
-                on_release: root.answer_ok();root.dismiss()
+                on_release: root.answer_ok()
                 Button_text:
                     pos_hint: {"center_x": .5,"center_y": .5}
                     text: "Переписать"
@@ -119,7 +119,7 @@
                         TimeSpinner:
                             id: hoursstartlunch
                             text: root.hours_start_lunch
-                            values: [str(x) for x in range(1,25)]
+                            values: [str(x) for x in range(0,25)]
                             on_text: root.start_calculate_work_time()
                         TitleLabel:
                             size_hint: .1, 1
@@ -141,7 +141,7 @@
                         TimeSpinner:
                             id: hoursendlunch
                             text: root.hours_end_lunch
-                            values: [str(x) for x in range(1,25)]
+                            values: [str(x) for x in range(0,25)]
                             on_text: root.start_calculate_work_time()
                         TitleLabel:
                             size_hint: .1, 1
@@ -204,7 +204,7 @@
                         TimeSpinner:
                             id: startworkhours
                             text: root.hours_start_work
-                            values: [str(x) for x in range(1,25)]
+                            values: [str(x) for x in range(0,25)]
                             on_text: root.start_calculate_work_time()
                         TitleLabel:
                             size_hint: .1, 1
@@ -225,7 +225,7 @@
                         TimeSpinner:
                             id: hoursendwork
                             text: root.hours_end_work
-                            values: [str(x) for x in range(1,25)]
+                            values: [str(x) for x in range(0,25)]
                             on_text: root.start_calculate_work_time()
 
                         TitleLabel:
@@ -243,7 +243,7 @@
                         Button:
                             size_hint:1,1
                             font_size: 25
-                            # on_press: root.btn_weekend()
+                            on_release: root.btn_weekend()
                             text: "Выходной"
                     MDBoxLayout:
                         orientation: "vertical"
