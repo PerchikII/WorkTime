@@ -8,7 +8,7 @@ import os
 from datetime import timedelta
 import pickle
 from pprint import pprint
-
+from tabnanny import check
 
 from kivymd.app import MDApp
 from kivy.uix.popup import Popup
@@ -75,13 +75,15 @@ def save_HDD_DICT_TIME(dictionary,name_file):
         pickle.dump(dictionary, file)
 
 DICT_TIME_STATISTIC = load_HDDfile_time()
+# DICT_TIME_STATISTIC = {}
 
 DICT_ROUT = load_HDDfile_route()
+# DICT_ROUT = {}
 
 
 
-message_the_same_day = """Рабочий день на эту дату существует.\n Переписать?"""
-
+message_the_same_day = "Рабочий день на эту дату существует.\n Переписать?"
+route_the_same = "Такой маршрут существует.\n Переписать?"
 month_lst = ['Январь', 'Февраль', 'Март', 'Апрель','Май', 'Июнь',
              'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
 
@@ -150,7 +152,6 @@ class Pages_main(MDScreen):
 
     def __init__(self, **kwargs):
         MDScreen.__init__(self,**kwargs)
-
         #self.main()
 
     def main(self):
@@ -160,29 +161,50 @@ class Pages_main(MDScreen):
 
     def btn_weekend(self):
         print("btn_weekend")
+        print("##############")
         pprint(DICT_TIME_STATISTIC)
+        print("##############")
+        pprint(DICT_ROUT)
+        self.change_save_text_label()
 
 
     def intercept_data_main_screen(self):
-        list_all_time_spinners = self.get_all_time_spiners()
+        check_box = self.ids.check_save_time.state # normal, down
+        list_all_time_spinners:list = self.get_all_time_spiners()
         date_choice_user:str = self.get_user_choice_date()
         total_time:tuple[str,str] = self.get_total_time_in_a_day()
         route_and_karta_in_day:str = self.get_route_user_choice()
-        print(list_all_time_spinners)
-        self.save_date_in_time_dict(date_choice_user,route_and_karta_in_day,total_time)
+        if check_box == "down" and route_and_karta_in_day:
+            self.save_data_route_time(route_and_karta_in_day,list_all_time_spinners)
+        else:
+            self.save_date_in_time_dict(date_choice_user, route_and_karta_in_day, total_time)
 
+
+    def save_data_route_time(self,route:str,spinners:list):
+        lab = self.ids["savingtext"]
+        check_key = self.check_day_in_dict(route,flag=False)
+        if check_key:
+            MyPoput(route_the_same, route,spinners,lab,flag=False)
+        else:
+            DICT_ROUT[route] = spinners
+            save_HDD_DICT_TIME(DICT_ROUT,"route_data.dat")
+            self.change_save_text_label()
 
     def save_date_in_time_dict(self,key:str,route:str,tot_time:tuple[str,str]):
-        route_and_time = ["",""]
+        lab = self.ids["savingtext"]
+        route_and_time:list = ["",""]
+        if not route:
+            route = "Не введён"
         route_and_time[0] = route
         route_and_time[1] = tot_time
         value_time = route_and_time
         check_key = self.check_day_in_dict(key)
         if check_key:
-            MyPoput(message_the_same_day, key,value_time)
+            MyPoput(message_the_same_day, key,value_time,lab,flag=True)
         else:
             DICT_TIME_STATISTIC[key] = value_time
             save_HDD_DICT_TIME(DICT_TIME_STATISTIC, "worktime_data.dat")
+            self.change_save_text_label()
 
     def get_all_time_spiners(self):
         all_time_spinners_list = [""] * 8
@@ -200,21 +222,21 @@ class Pages_main(MDScreen):
         all_time_spinners_list[7] = self.ids["minutesendlunch"].text
         return all_time_spinners_list
 
-
-
     @staticmethod
-    def check_day_in_dict(key):
-        if key in DICT_TIME_STATISTIC:
-            return True
-        # else:
-        #     return False
+    def check_day_in_dict(key,flag=True):
+        if flag:
+            if key in DICT_TIME_STATISTIC:
+                return True
+        else:
+            if key in DICT_ROUT:
+                return True
     def get_route_user_choice(self):
         route = self.ids["route_number_textinput"].text
         karta = self.ids["karta_route_number_textinput"].text
         if route and karta:
             return route + "/" + karta
         else:
-            return "Не введён"
+            return False
     def get_total_time_in_a_day(self):
         hours = self.total_hours_work
         mitutes = self.total_minutes_work
@@ -294,6 +316,17 @@ class Pages_main(MDScreen):
         time_end_work = timedelta(hours=Hour_end_work, minutes=Min_end_work)
         total_time_less_day_work = (time_end_work - time_start_work) - total_time_lunch
         return total_time_less_day_work
+
+    def my_callback(self,instance):
+        self.ids["savingtext"].text_color = "black"
+        self.lab_save_txt = "Отработано:"
+        return False
+
+    def change_save_text_label(self):
+        Clock.schedule_once(self.my_callback, 2)
+        self.ids["savingtext"].theme_text_color = "Custom"
+        self.ids["savingtext"].text_color = "red"
+        self.lab_save_txt = "Сохранено"
 
 
 
@@ -595,22 +628,37 @@ class KartaTextInput(MDTextField):
 
 class MyPoput(Popup):
     message_info = StringProperty("")
-    def __init__(self,message,key,work_time,**kwargs):
+    def __init__(self,message,key,work_time,lab,flag=True,**kwargs):
         Popup.__init__(self,**kwargs)
         self.message_info = message
         self.key = key
         self.work_time = work_time
+        self.flag = flag
+        self.label = lab
         self.open()
 
     def answer_ok(self):
-        print("poput answer",self.key,"work time",self.work_time)
-        DICT_TIME_STATISTIC[self.key] = self.work_time
-        save_HDD_DICT_TIME(DICT_TIME_STATISTIC, "worktime_data.dat")
-        print("#######################")
-        pprint(DICT_TIME_STATISTIC)
-        print("######################")
+        if self.flag:
+            DICT_TIME_STATISTIC[self.key] = self.work_time
+            save_HDD_DICT_TIME(DICT_TIME_STATISTIC, "worktime_data.dat")
+            self.change_save_text_label()
+        else:
+            DICT_ROUT[self.key] = self.work_time
+            save_HDD_DICT_TIME(DICT_ROUT, "route_data.dat")
+            self.change_save_text_label()
         self.dismiss()
         return
+    def my_callback(self,instance):
+        self.label.text_color = "black"
+        self.label.text = "Отработано:"
+        return False
+
+    def change_save_text_label(self):
+        Clock.schedule_once(self.my_callback, 2)
+        self.label.theme_text_color = "Custom"
+        self.label.text_color = "red"
+        self.label.text = "Сохранено"
+
 
 
 

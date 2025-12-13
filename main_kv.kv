@@ -38,7 +38,7 @@
 <TitleLabel@MDLabel>
     size_hint: 1, 1
     # font_size: 30
-    color: 0,0,0
+    #color: 0,0,0
     font_style: "Title"
     role: "small"
     bold: True
@@ -162,9 +162,10 @@
                     MDBoxLayout:
                         size_hint_y: .15
                         TitleLabel:
+                            id: savingtext
                             text: root.lab_save_txt
                             role: "large"
-                            halign: "left"
+                            halign: "center"
                     MDBoxLayout:
                         size_hint_y: .25
                         TitleLabel:
@@ -249,7 +250,7 @@
                         orientation: "vertical"
                         size_hint:1,1
                         TitleLabel:
-                            text: "запомнить время"
+                            text: "создать карточку"
                             font_style: "Body"
                             role: "small"
                         CheckBox:####################################################################################
