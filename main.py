@@ -8,7 +8,7 @@ import os
 from datetime import timedelta
 import pickle
 from pprint import pprint
-from tabnanny import check
+
 
 from kivymd.app import MDApp
 from kivy.uix.popup import Popup
@@ -166,6 +166,32 @@ class Pages_main(MDScreen):
         print("##############")
         pprint(DICT_ROUT)
         self.change_save_text_label()
+    def search_rout_in_dict(self):
+        route_and_karta = self.get_route_user_choice()
+        if route_and_karta in DICT_ROUT:
+            list_time = DICT_ROUT[route_and_karta]
+            HW_start = list_time[0]
+            MW_start = list_time[1]
+            HW_end = list_time[2]
+            MW_end = list_time[3]
+            HL_start = list_time[4]
+            ML_start = list_time[5]
+            HL_end = list_time[6]
+            ML_end = list_time[7]
+            self.install_time_in_spinner(HW_start,MW_start,HW_end,MW_end,HL_start,ML_start,HL_end,ML_end)
+
+    def install_time_in_spinner(self,HW_start,MW_start,HW_end,MW_end,HL_start,ML_start,HL_end,ML_end):
+        self.ids["startworkhours"].text = HW_start
+        self.ids["startworkminutes"].text = MW_start
+        # Конец раб.дня
+        self.ids["hoursendwork"].text = HW_end
+        self.ids["minutesendwork"].text = MW_end
+        # Обед начало
+        self.ids["hoursstartlunch"].text = HL_start
+        self.ids["minutesstartlunch"].text = ML_start
+        # Обед конец
+        self.ids["hoursendlunch"].text = HL_end
+        self.ids["minutesendlunch"].text = ML_end
 
 
     def intercept_data_main_screen(self):
@@ -181,17 +207,17 @@ class Pages_main(MDScreen):
 
 
     def save_data_route_time(self,route:str,spinners:list):
-        lab = self.ids["savingtext"]
+        label_text_save = self.ids["savingtext"]
         check_key = self.check_day_in_dict(route,flag=False)
         if check_key:
-            MyPoput(route_the_same, route,spinners,lab,flag=False)
+            MyPoput(route_the_same, route,spinners,label_text_save,flag=False)
         else:
             DICT_ROUT[route] = spinners
             save_HDD_DICT_TIME(DICT_ROUT,"route_data.dat")
             self.change_save_text_label()
 
     def save_date_in_time_dict(self,key:str,route:str,tot_time:tuple[str,str]):
-        lab = self.ids["savingtext"]
+        label_text_save = self.ids["savingtext"]
         route_and_time:list = ["",""]
         if not route:
             route = "Не введён"
@@ -200,7 +226,7 @@ class Pages_main(MDScreen):
         value_time = route_and_time
         check_key = self.check_day_in_dict(key)
         if check_key:
-            MyPoput(message_the_same_day, key,value_time,lab,flag=True)
+            MyPoput(message_the_same_day, key,value_time,label_text_save,flag=True)
         else:
             DICT_TIME_STATISTIC[key] = value_time
             save_HDD_DICT_TIME(DICT_TIME_STATISTIC, "worktime_data.dat")
@@ -221,7 +247,6 @@ class Pages_main(MDScreen):
         all_time_spinners_list[6] = self.ids["hoursendlunch"].text
         all_time_spinners_list[7] = self.ids["minutesendlunch"].text
         return all_time_spinners_list
-
     @staticmethod
     def check_day_in_dict(key,flag=True):
         if flag:
@@ -237,6 +262,7 @@ class Pages_main(MDScreen):
             return route + "/" + karta
         else:
             return False
+
     def get_total_time_in_a_day(self):
         hours = self.total_hours_work
         mitutes = self.total_minutes_work
@@ -265,7 +291,9 @@ class Pages_main(MDScreen):
         else:
             total_time_work = self.calculate_time_less_day(time_tuple)
         self.install_total_time_work_in_label(total_time_work)
+
     def install_total_time_work_in_label(self,total_time_work):
+        print("total_time_work",total_time_work)
         time_struct = time.gmtime(total_time_work.total_seconds())
         self.total_hours_work = str(time_struct.tm_hour)
         self.total_minutes_work = str(time_struct.tm_min)
@@ -316,12 +344,10 @@ class Pages_main(MDScreen):
         time_end_work = timedelta(hours=Hour_end_work, minutes=Min_end_work)
         total_time_less_day_work = (time_end_work - time_start_work) - total_time_lunch
         return total_time_less_day_work
-
     def my_callback(self,instance):
         self.ids["savingtext"].text_color = "black"
         self.lab_save_txt = "Отработано:"
         return False
-
     def change_save_text_label(self):
         Clock.schedule_once(self.my_callback, 2)
         self.ids["savingtext"].theme_text_color = "Custom"
