@@ -33,7 +33,7 @@
 <TimeSpinner@Spinner>
     size_hint: 1, 1
     # pos_hint: {"right":1,"top":1}
-    font_size: 50
+    font_size: sp(30)
 
 <TitleLabel@MDLabel>
     size_hint: 1, 1
@@ -58,7 +58,6 @@
             halign: "center"
             color: 1,1,1
         MDBoxLayout:
-
             Button_main:
                 on_release: root.answer_ok()
                 Button_text:
@@ -99,7 +98,6 @@
                             id: spinner_day
                             text: root.day_spinner
                             values: map(str,list(range(1,32)))
-                            on_text: pass
                     MDBoxLayout:
                         size_hint_y: .4
                         TimeSpinner:
@@ -107,7 +105,6 @@
                             text:  root.month_spinner_str
                             values: root.month_spinner_lst
                             font_size: 30
-                            on_text: pass
                 TimeBox:
                     size_hint_y: .2
                     MDBoxLayout:
@@ -119,7 +116,7 @@
                         TimeSpinner:
                             id: hoursstartlunch
                             text: root.hours_start_lunch
-                            values: [str(x) for x in range(0,25)]
+                            values: [str(i) for i in range(0,25)]
                             on_text: root.start_calculate_work_time()
                         TitleLabel:
                             size_hint: .1, 1
@@ -127,7 +124,7 @@
                         TimeSpinner:
                             id: minutesstartlunch
                             text: root.minutes_start_lunch
-                            values: [str(x).zfill(2) for x in range(0,60)]
+                            values: [str(i).zfill(2) for i in range(0,60)]
                             on_text: root.start_calculate_work_time()
                 TimeBox:
                     size_hint_y: .2
@@ -244,7 +241,7 @@
                         Button:
                             size_hint:1,1
                             font_size: 25
-                            on_release: root.btn_weekend()
+                            on_release: root.btnweekend()
                             text: "Выходной"
                     MDBoxLayout:
                         orientation: "vertical"
@@ -260,14 +257,13 @@
                             # on_active: root.remember_the_time(self.active)
                 TimeBox:
                     orientation: "vertical"
-
                     RouteTextInput:
                         id: route_number_textinput
-                        text: ""
+                        text: root.hours_start_work
                         mode: "outlined"
                         multiline: False
                         font_size: 40
-                        on_text: root.search_rout_in_dict()
+                        # on_text: root.search_rout_in_dict()
                         MDTextFieldHintText:
                             text: "Маршрут"
                             text_color_normal: "brown"
@@ -277,7 +273,7 @@
                         mode: "outlined"
                         multiline: False
                         font_size: 40
-                        on_text: root.search_rout_in_dict()
+                        # on_text: root.search_rout_in_dict()
                         MDTextFieldHintText:
                             text: "Карта"
                             text_color_normal: "brown"
@@ -329,7 +325,7 @@
             size_hint_y: .25
             TimeSpinner:
                 id: spinner_day
-                size_hint: .3, 1
+                size_hint: .25, 1
                 text: "27"# "root.day_spinner_str"
                 values: map(str,list(range(1,32)))
                 on_text: root.create_a_date_for_label()
@@ -344,7 +340,7 @@
 
             TimeSpinner:
                 id: spinner_day
-                size_hint: .3, 1
+                size_hint: .25, 1
                 # pos_hint: {"top":1}
                 text: "27"# "root.day_spinner_str"
                 values: map(str,list(range(1,32)))
@@ -358,27 +354,26 @@
                 orientation: "vertical"
                 size_hint: 1, 1
                 # elevation: 20
-                MDLabel:
-                    text_size: self.size
-                    theme_font_size: "Custom"
-                    font_size: sp(20)
-                    bold:True
-                    padding: sp(10)
-                    size_hint: 1,.06
-                    text: "Месяц"
-                    valign: "center"
-                    halign: "center"
-                MDLabel:
-                    id: card_label_id
-                    text_size: self.size
-                    theme_font_size: "Custom"
-                    font_size: sp(15)
-                    bold:True
-                    spacing: sp(10)
-                    padding: sp(10)
-                    size_hint: 1,1
-                    text:  "root.strig_statistic_for_label"
-                    valign: "top"
+                MDBoxLayout:
+                    orientation: "vertical"
+                    MDBoxLayout:
+                        MDLabel:
+                            text_size: self.size
+                            theme_font_size: "Custom"
+                            font_size: sp(20)
+                            bold:True
+                            text: spinner_month.text
+#                                valign: "center"
+#                                halign: "center"
+                    MDBoxLayout:
+                        MDLabel:
+                            id: card_label_id
+                            text_size: self.size
+                            theme_font_size: "Custom"
+                            font_size: sp(15)
+                            bold:True
+                            text:  "root.strig_statistic_for_label"
+
 
         MDBoxLayout:
             Button:

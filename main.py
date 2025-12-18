@@ -1,5 +1,3 @@
-# if not os.path.isfile("data_base.dat"):  # создание на HDD файла, если нету
-        # with open(os.path.join(dirname[0], "data_base.dat"), 'wb'): pass
 # class MyList(list):
 #     def __getitem__ (self, offset):
 #         return list.__getitem__ (self, offset - 1)
@@ -8,7 +6,6 @@ import os
 from datetime import timedelta
 import pickle
 from pprint import pprint
-
 
 from kivymd.app import MDApp
 from kivy.uix.popup import Popup
@@ -19,9 +16,8 @@ from kivy.uix.screenmanager import SlideTransition
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.textfield import MDTextField
 
-
 from kivy.lang.builder import Builder
-from kivy.properties import ListProperty,StringProperty
+from kivy.properties import ListProperty, StringProperty
 from kivy.clock import Clock
 from kivy.core.window import Window
 
@@ -42,6 +38,8 @@ from kivy.core.window import Window
 # INSTALL_TIME = [x.rstrip() for x in install_time_in_stringproperty()]
 
 dir_name = os.path.split(os.path.abspath(__file__))
+
+
 def load_HDDfile_time():
     try:
         with open("worktime_data.dat", 'rb') as file:
@@ -55,6 +53,8 @@ def load_HDDfile_time():
             file_dict = {}
             pickle.dump(file_dict, obj)
     return file_dict
+
+
 def load_HDDfile_route():
     try:
         with open("route_data.dat", 'rb') as file:
@@ -70,9 +70,10 @@ def load_HDDfile_route():
     return file_dict
 
 
-def save_HDD_DICT_TIME(dictionary,name_file):
+def save_HDD_DICT_TIME(dictionary, name_file):
     with open(name_file, 'wb') as file:
         pickle.dump(dictionary, file)
+
 
 DICT_TIME_STATISTIC = load_HDDfile_time()
 # DICT_TIME_STATISTIC = {}
@@ -81,14 +82,13 @@ DICT_ROUT = load_HDDfile_route()
 # DICT_ROUT = {}
 
 
-
 message_the_same_day = "Рабочий день на эту дату существует.\n Переписать?"
 route_the_same = "Такой маршрут существует.\n Переписать?"
-month_lst = ['Январь', 'Февраль', 'Март', 'Апрель','Май', 'Июнь',
+month_lst = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
              'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
 
-time_now = time.time() # Секунды с начала эпохи
-time_day = time.localtime(time_now) # Текущее число
+time_now = time.time()  # Секунды с начала эпохи
+time_day = time.localtime(time_now)  # Текущее число
 
 if time.strftime("%d", time_day)[0] == "0":
     CURRENT_DAY = time.strftime("%d", time_day)[1]
@@ -102,44 +102,48 @@ CURRENT_MONTH = month_lst[number_month - 1]
 class PagesManager(MDScreenManager):
     def __init__(self, **kwargs):
         MDScreenManager.__init__(self, **kwargs)
+
     def on_touch_down(self, touch):
         self.tap_X_Down = touch.x
         self.tap_Y_Down = touch.y
         return super(PagesManager, self).on_touch_down(touch)
+
     def on_touch_up(self, touch):
         self.tap_X_Up = touch.x
         self.tap_Y_Up = touch.y
         if (self.tap_X_Down - self.tap_X_Up) > 100:
             if self.current == "main_page":
-               self.transition.direction = "left"
-               self.current = "stat_page"
-               self.transition = SlideTransition()
+                self.transition.direction = "left"
+                self.current = "stat_page"
+                self.transition = SlideTransition()
         if self.tap_X_Down < self.tap_X_Up:
-             if  self.current == "stat_page":
-                 self.transition.direction = "right"
-                 self.current = "main_page"
-                 self.transition = SlideTransition()
+            if self.current == "stat_page":
+                self.transition.direction = "right"
+                self.current = "main_page"
+                self.transition = SlideTransition()
         if (self.tap_Y_Down - self.tap_Y_Up) > 100:
             if self.current == "main_page":
                 self.transition.direction = "down"
                 self.current = "sett_page"
         return super(PagesManager, self).on_touch_up(touch)
+
+
 class Pages_main(MDScreen):
     """Читай переменные. Их имена обо всём говорят."""
     day_spinner = StringProperty(CURRENT_DAY)
     month_spinner_str = StringProperty(CURRENT_MONTH)
     month_spinner_lst = ListProperty(month_lst)
 
-    hours_start_lunch = StringProperty("0")
+    hours_start_lunch = StringProperty("00")
     minutes_start_lunch = StringProperty("00")
 
-    hours_end_lunch = StringProperty("0")
+    hours_end_lunch = StringProperty("00")
     minutes_end_lunch = StringProperty("00")
 
-    hours_start_work = StringProperty("0")
+    hours_start_work = StringProperty("00")
     minutes_start_work = StringProperty("00")
 
-    hours_end_work = StringProperty("0")
+    hours_end_work = StringProperty("00")
     minutes_end_work = StringProperty("00")
 
     total_hours_work = StringProperty("00")
@@ -151,21 +155,8 @@ class Pages_main(MDScreen):
     key_dict_total_data = CURRENT_DAY + " " + CURRENT_MONTH
 
     def __init__(self, **kwargs):
-        MDScreen.__init__(self,**kwargs)
-        #self.main()
+        MDScreen.__init__(self, **kwargs)
 
-    def main(self):
-        self.update_statistic()
-        if "down" in INSTALL_TIME:
-            self.install_total_time_after_save()
-
-    def btn_weekend(self):
-        print("btn_weekend")
-        print("##############")
-        pprint(DICT_TIME_STATISTIC)
-        print("##############")
-        pprint(DICT_ROUT)
-        self.change_save_text_label()
     def search_rout_in_dict(self):
         route_and_karta = self.get_route_user_choice()
         if route_and_karta in DICT_ROUT:
@@ -178,9 +169,9 @@ class Pages_main(MDScreen):
             ML_start = list_time[5]
             HL_end = list_time[6]
             ML_end = list_time[7]
-            self.install_time_in_spinner(HW_start,MW_start,HW_end,MW_end,HL_start,ML_start,HL_end,ML_end)
+            self.install_time_in_spinner(HW_start, MW_start, HW_end, MW_end, HL_start, ML_start, HL_end, ML_end)
 
-    def install_time_in_spinner(self,HW_start,MW_start,HW_end,MW_end,HL_start,ML_start,HL_end,ML_end):
+    def install_time_in_spinner(self, HW_start, MW_start, HW_end, MW_end, HL_start, ML_start, HL_end, ML_end):
         self.ids["startworkhours"].text = HW_start
         self.ids["startworkminutes"].text = MW_start
         # Конец раб.дня
@@ -193,32 +184,30 @@ class Pages_main(MDScreen):
         self.ids["hoursendlunch"].text = HL_end
         self.ids["minutesendlunch"].text = ML_end
 
-
     def intercept_data_main_screen(self):
-        check_box = self.ids.check_save_time.state # normal, down
-        list_all_time_spinners:list = self.get_all_time_spiners()
-        date_choice_user:str = self.get_user_choice_date()
-        total_time:tuple[str,str] = self.get_total_time_in_a_day()
-        route_and_karta_in_day:str = self.get_route_user_choice()
+        check_box = self.ids.check_save_time.state  # normal, down
+        list_all_time_spinners: list = self.get_all_time_spiners()
+        date_choice_user: str = self.get_user_choice_date()
+        total_time: tuple[str, str] = self.get_total_time_in_a_day()
+        route_and_karta_in_day: str = self.get_route_user_choice()
         if check_box == "down" and route_and_karta_in_day:
-            self.save_data_route_time(route_and_karta_in_day,list_all_time_spinners)
+            self.save_data_route_time(route_and_karta_in_day, list_all_time_spinners)
         else:
             self.save_date_in_time_dict(date_choice_user, route_and_karta_in_day, total_time)
 
-
-    def save_data_route_time(self,route:str,spinners:list):
+    def save_data_route_time(self, route: str, spinners: list):
         label_text_save = self.ids["savingtext"]
-        check_key = self.check_day_in_dict(route,flag=False)
+        check_key = self.check_day_in_dict(route, flag=False)
         if check_key:
-            MyPoput(route_the_same, route,spinners,label_text_save,flag=False)
+            MyPoput(route_the_same, route, spinners, label_text_save, flag=False)
         else:
             DICT_ROUT[route] = spinners
-            save_HDD_DICT_TIME(DICT_ROUT,"route_data.dat")
+            save_HDD_DICT_TIME(DICT_ROUT, "route_data.dat")
             self.change_save_text_label()
 
-    def save_date_in_time_dict(self,key:str,route:str,tot_time:tuple[str,str]):
+    def save_date_in_time_dict(self, key: str, route: str, tot_time: tuple[str, str]):
         label_text_save = self.ids["savingtext"]
-        route_and_time:list = ["",""]
+        route_and_time: list = ["", ""]
         if not route:
             route = "Не введён"
         route_and_time[0] = route
@@ -226,7 +215,7 @@ class Pages_main(MDScreen):
         value_time = route_and_time
         check_key = self.check_day_in_dict(key)
         if check_key:
-            MyPoput(message_the_same_day, key,value_time,label_text_save,flag=True)
+            MyPoput(message_the_same_day, key, value_time, label_text_save, flag=True)
         else:
             DICT_TIME_STATISTIC[key] = value_time
             save_HDD_DICT_TIME(DICT_TIME_STATISTIC, "worktime_data.dat")
@@ -247,14 +236,16 @@ class Pages_main(MDScreen):
         all_time_spinners_list[6] = self.ids["hoursendlunch"].text
         all_time_spinners_list[7] = self.ids["minutesendlunch"].text
         return all_time_spinners_list
+
     @staticmethod
-    def check_day_in_dict(key,flag=True):
+    def check_day_in_dict(key, flag=True):
         if flag:
             if key in DICT_TIME_STATISTIC:
                 return True
         else:
             if key in DICT_ROUT:
                 return True
+
     def get_route_user_choice(self):
         route = self.ids["route_number_textinput"].text
         karta = self.ids["karta_route_number_textinput"].text
@@ -266,11 +257,13 @@ class Pages_main(MDScreen):
     def get_total_time_in_a_day(self):
         hours = self.total_hours_work
         mitutes = self.total_minutes_work
-        return hours,mitutes
+        return hours, mitutes
+
     def get_user_choice_date(self):
         day = self.ids["spinner_day"].text
         month = self.ids["spinner_month"].text
         return day + " " + month
+
     def start_calculate_work_time(self):
         # Начало раб.дня
         start_work_H = self.ids["startworkhours"].text
@@ -285,21 +278,22 @@ class Pages_main(MDScreen):
         end_lunch_H = self.ids["hoursendlunch"].text
         end_lunch_M = self.ids["minutesendlunch"].text
 
-        time_tuple = (start_work_H,start_work_M,end_work_H,end_work_M,start_lunch_H,start_lunch_M,end_lunch_H,end_lunch_M)
+        time_tuple = (
+        start_work_H, start_work_M, end_work_H, end_work_M, start_lunch_H, start_lunch_M, end_lunch_H, end_lunch_M)
         if int(start_work_H) > int(end_work_H):
             total_time_work = self.calculate_time_more_day(time_tuple)
         else:
             total_time_work = self.calculate_time_less_day(time_tuple)
         self.install_total_time_work_in_label(total_time_work)
 
-    def install_total_time_work_in_label(self,total_time_work):
-        print("total_time_work",total_time_work)
+    def install_total_time_work_in_label(self, total_time_work):
         time_struct = time.gmtime(total_time_work.total_seconds())
         self.total_hours_work = str(time_struct.tm_hour)
         self.total_minutes_work = str(time_struct.tm_min)
         day = self.ids["spinner_day"].text
         month = self.ids["spinner_month"].text
-        self.date_total_time = day+ " "+ month
+        self.date_total_time = day + " " + month
+
     @staticmethod
     def calculate_time_more_day(time_tuple):
         day = timedelta(hours=24)
@@ -324,6 +318,7 @@ class Pages_main(MDScreen):
         total = diff_hours_with_day + time_end_work
         total_time_more_day_work = total - total_time_lunch
         return total_time_more_day_work
+
     @staticmethod
     def calculate_time_less_day(time_args):
         Hour_start_work = int(time_args[0])
@@ -344,283 +339,213 @@ class Pages_main(MDScreen):
         time_end_work = timedelta(hours=Hour_end_work, minutes=Min_end_work)
         total_time_less_day_work = (time_end_work - time_start_work) - total_time_lunch
         return total_time_less_day_work
-    def my_callback(self,instance):
+
+    def my_callback(self, instance):
         self.ids["savingtext"].text_color = "black"
         self.lab_save_txt = "Отработано:"
         return False
+
     def change_save_text_label(self):
         Clock.schedule_once(self.my_callback, 2)
         self.ids["savingtext"].theme_text_color = "Custom"
         self.ids["savingtext"].text_color = "red"
         self.lab_save_txt = "Сохранено"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # def install_total_time_after_save(self):
-    #     tuple_time = (self.hours_start_work, self.minutes_start_work, self.hours_end_work,
-    #                   self.minutes_end_work, self.hours_start_lunch, self.minutes_start_lunch,
-    #                   self.hours_end_lunch, self.minutes_end_lunch)
-    #     self.work_time_calc(tuple_time)
-    #
-    # def update_statistic(self,choice_month:str=CURRENT_MONTH):
-    #     lst_dates_current_month = self.get_dates_from_current_month(choice_month) # Список дат с нужным месяцем
-    #     lst_sorted_num_current_month = self.get_num_days(lst_dates_current_month) # Список чисел нужного месяца
-    #     lst_keys_dates = self.create_keys_date_choice_month(lst_sorted_num_current_month) # Список ["10 Октябрь"]
-    #     time_statistic = self.update_total_time_statistic(lst_keys_dates) # Кортеж (170,45) часы минуты
-    #     lst_all_month = self.get_set_all_month()
-    #
-    #     self.install_statistic(lst_sorted_num_current_month,lst_all_month,time_statistic,choice_month)
-    #
-    # def install_statistic(self,*args):
-    #     self.spinner_month_statistic_lst = args[1] # Устан.всех месяцев в Spinner
-    #     self.total_month_spinner = args[3]  # Устан.выбранного месяца в Spinner
-    #     try:
-    #         self.from_total_days_spinner = str(args[0][0])  # Первое число месяца
-    #         self.to_total_days_spinner = str(args[0][-1])  # Последнее число месяца
-    #     except IndexError:
-    #         self.from_total_days_spinner = "0" # Первое число месяца, если словарь пустой!
-    #         self.to_total_days_spinner = "0"   # Последнее число месяца, если словарь пустой!
-    #
-    #     self.list_from_total_days = map(str, args[0])  # Установка списка чисел
-    #     self.list_to_total_days = map(str, args[0])  # Установка списка чисел
-    #     self.total_hours_work_statistic = args[2][0] # Установка времени часы
-    #     self.total_minutes_work_statistic = args[2][1] # Установка времени минуты
-    #
-    # def get_set_all_month(self):
-    #     all_month = []
-    #     for i in self.file_dict: # Получаем в i ключи словаря
-    #         all_month.append(i.split()[1])
-    #     return set(all_month)
-    #
-    # def get_dates_from_current_month(self, choice_month):
-    #     list_month = []  # Только даты выбранного месяца
-    #     for i in self.file_dict:  # Получаем в i ключи словаря
-    #         if i.split()[1] == choice_month:  # Определяем нужный месяц из списка. Вычленяем название месяца
-    #             list_month.append(i)  # Записываем в список только даты с нужным месяцем
-    #     return list_month
-    #
-    # def get_num_days(self,lst_current_month:list):
-    #     lst_num_days = []
-    #     for i in lst_current_month: # Идём по списку месяца
-    #         num_day = int(i.split()[0]) # Вычленяя только число месяца оборачивая в int()
-    #         lst_num_days.append(num_day) # Только числа: int выбранного месяца
-    #     lst_num_days.sort()
-    #     return lst_num_days
-    #
-    # def create_keys_date_choice_month(self, sorted_num_current_days:list, month_choice:str=CURRENT_MONTH):
-    #     keys_all_work = []
-    #     for i in range(len(sorted_num_current_days)): # Проход по длинне списка дат
-    #         keys_all_work.append(str(sorted_num_current_days[i]) + " " + month_choice) # создание строки ключа словаря и запись в список
-    #     return keys_all_work
-    #
-    # def update_total_time_statistic(self,keys_all_work_data_sorted:list):
-    #     hours = 0
-    #     minutes = 0
-    #     for i in keys_all_work_data_sorted: # ==========>>>>>>> ключи
-    #         hours += int(self.file_dict[i].split(":")[0])
-    #         minutes += int(self.file_dict[i].split(":")[1])
-    #
-    #     hours_delta = timedelta(hours=hours).total_seconds()
-    #     minutes_delta = timedelta(minutes=minutes).total_seconds()
-    #     total_time_in_sec = minutes_delta + hours_delta
-    #     hours_total = int(total_time_in_sec // 3600)
-    #     minut = int((total_time_in_sec - hours_total * 3600) / 60)
-    #     return str(hours_total), str(minut)
-    #
-    # def list_sort_choices_num_days(self,list_num_choice_month,firstday,lastday):
-    #     list_num_choice = []
-    #     for i in list_num_choice_month:
-    #         if int(firstday) <= i <= int(lastday):
-    #             list_num_choice.append(i)
-    #     return list_num_choice
-    #
-    # def create_choice_spinner(self, spinner):
-    #     match spinner.uid:
-    #         case 3581:
-    #             self.from_total_days_spinner = spinner.text
-    #             if self.total_month_spinner != '' and  self.to_total_days_spinner != '':
-    #                 self.statistic_from_spinner(self.total_month_spinner)
-    #         case 3617:
-    #             self.total_month_spinner = spinner.text
-    #             if self.from_total_days_spinner != '' and  self.to_total_days_spinner != '':
-    #                 self.install_firsday_lastday(self.total_month_spinner)
-    #                 self.statistic_from_spinner(self.total_month_spinner)
-    #         case 3653:
-    #             self.to_total_days_spinner = spinner.text
-    #             if self.from_total_days_spinner != '' and self.total_month_spinner != '':
-    #                 self.statistic_from_spinner(self.total_month_spinner)
-    #
-    # def install_firsday_lastday(self,c_month):
-    #     """Устанавливает первый и последний день выбранного месяца после выбора spinner месяца"""
-    #     lst_dates_choice_month = self.get_dates_from_current_month(c_month)  # Получаем даты с нужным месяцем list
-    #     sort_num_choice = self.get_num_days(lst_dates_choice_month)  # Список int выбранных чисел для Spinner
-    #
-    #     self.from_total_days_spinner = str(sort_num_choice[0])
-    #     self.to_total_days_spinner = str(sort_num_choice[-1])
-    #
-    # def statistic_from_spinner(self,choice_month):
-    #     lst_dates_choice_month = self.get_dates_from_current_month(choice_month) # Получаем даты с нужным месяцем list
-    #     sort_num_choice = self.get_num_days(lst_dates_choice_month) # Список int выбранных чисел для Spinner
-    #
-    #     list_sort_num_choice = self.list_sort_choices_num_days(sort_num_choice,self.from_total_days_spinner,
-    #                                                            self.to_total_days_spinner)
-    #     lst_keys_choice_date = self.create_keys_date_choice_month(list_sort_num_choice,choice_month)
-    #     time_statistic = self.update_total_time_statistic(lst_keys_choice_date)  # Получаем кортеж (170,45) часы минуты
-    #     self.install_totaltime_statistic(sort_num_choice,time_statistic)
-    #
-    # def install_totaltime_statistic(self,sort_num_choice, totaltime):
-    #     self.list_from_total_days = map(str, sort_num_choice) # Установка списка чисел
-    #     self.list_to_total_days = map(str, sort_num_choice)  # Установка списка чисел
-    #
-    #     self.total_hours_work_statistic = str(totaltime[0])  # Установка времени часы
-    #     self.total_minutes_work_statistic = str(totaltime[1])  # Установка времени минуты
-    #
-    # def get_from_current_month(self, choice_month,firstday,lastday):
-    #     list_dates = self.get_dates_from_current_month(choice_month) # даты выбранного месяца List
-    #     list_num_choice_month = self.get_num_days(list_dates) # Список чисел выбранного месяца List
-    #     list_keys = self.create_keys_date_choice_month(list_num_choice_month,choice_month) # Список ключей
-    #     return list_keys
-    #
-    #
-    # def my_callback(self,instance):
-    #     self.lab_save_txt = "Отработано:"
-    #     return False
-    #
-    # def write_file_time_work(self):
-    #     with open("data_base.dat", 'wb') as files:
-    #         pickle.dump(self.file_dict, files)
-    #     Clock.schedule_once(self.my_callback, 2)
-    #     self.lab_save_txt = "Сохранено"
-    #     self.update_statistic()
-    #
-    #
-    #
-    #
-    #
-    #
-    #
-    #
-    #
-    #
-    # def create_a_date_for_label(self):
-    #     """Формируется ключ для словаря
-    #     key_dict_total_data = "10 Января" """
-    #     self.label_month_lst.clear()
-    #     day = self.ids['day'].text
-    #     month = self.ids['month'].text
-    #     self.label_month_lst.append(day)
-    #     self.label_month_lst.append(month)
-    #     self.key_dict_total_data = day + " " + month
-    #
-    # def validate_file_time_work(self):
-    #     data = self.key_dict_total_data
-    #     time_work = self.value_dict_total_time_work
-    #
-    #     if data in self.file_dict:
-    #         self.write_or_cancel_poput()
-    #     else:
-    #         self.file_dict[data] = time_work
-    #         self.write_file_time_work()
-    #
-    # def overwriting(self):
-    #     data = self.key_dict_total_data
-    #     time_work = self.value_dict_total_time_work
-    #     self.file_dict[data] = time_work
-    #     self.write_file_time_work()
-
-    # def btn_weekend(self):
-    #     """Установка всех spinner в значение '00'- выходной день"""
-    #     self.hours_start_work = "00"
-    #     self.minutes_start_work = "00"
-    #     self.hours_end_work = "00"
-    #     self.minutes_end_work = "00"
-    #     self.hours_start_lunch = "00"
-    #     self.minutes_start_lunch = "00"
-    #     self.hours_end_lunch = "00"
-    #     self.minutes_end_lunch = "00"
-    #     self.total_hours_work = "00"
-    #     self.total_minutes_work = "00"
-
-    # def remember_the_time(self, value):
-    #     CONDITION = self.ids["check_save_time"].state
-    #     if value:
-    #         self.record_value_time_in_file(CONDITION)
-    #     else:
-    #         self.record_value_time_in_file(CONDITION,FLAG=False)
-    #
-    # def record_value_time_in_file(self,condition,FLAG=True):
-    #     if FLAG:
-    #         with open("tests/file_save_time.txt", "w") as f:
-    #             f.write(self.hours_start_work + "\n") # Индекс 0
-    #             f.write(self.minutes_start_work + "\n") # Индекс 1
-    #             f.write(self.hours_end_work + "\n") # Индекс 2
-    #             f.write(self.minutes_end_work + "\n") # Индекс 3
-    #             f.write(self.hours_start_lunch + "\n") # Индекс 4
-    #             f.write(self.minutes_start_lunch + "\n") # Индекс 5
-    #             f.write(self.hours_end_lunch + "\n") # Индекс 6
-    #             f.write(self.minutes_end_lunch + "\n") # Индекс 7
-    #             f.write(condition)
-    #     else:
-    #         with open("tests/file_save_time.txt", "w") as f:
-    #             for i in range(8):
-    #                 f.write("00" + "\n")
-    #             f.write(condition)
+    def btnweekend(self):
+        # self.ids.startworkminutes.text = "5"
+        print(self.hours_start_work)
+        self.hours_start_work = "00"
+        self.minutes_start_work = "00"
+        self.hours_end_work = "00"
+        self.minutes_end_work = "00"
+        self.hours_start_lunch = "00"
+        self.minutes_start_lunch = "00"
+        self.hours_end_lunch = "00"
+        self.minutes_end_lunch = "00"
+        self.total_hours_work = "00"
+        self.total_minutes_work = "00"
+        self.ids["route_number_textinput"].text = ""
+        self.ids["karta_route_number_textinput"].text = ""
+        pprint(DICT_ROUT)
 
 class Pages_stat(MDScreen):
     """Читай переменные. Их имена обо всём говорят."""
-    from_total_days_spinner = StringProperty("")
-    total_month_spinner = StringProperty(CURRENT_MONTH)
-    to_total_days_spinner = StringProperty("")
-
-    total_hours_work_statistic = StringProperty()
-    total_minutes_work_statistic = StringProperty()
-
-    list_from_total_days = ListProperty()
-    list_to_total_days = ListProperty()
-
-    day_spinner_str = StringProperty(CURRENT_DAY)
-    month_spinner_str = StringProperty(CURRENT_MONTH)
-
-    label_month_lst = ListProperty([CURRENT_DAY, CURRENT_MONTH])  # Устан.даты в Label
-
-    spinner_month_statistic_lst = ListProperty()  # Устан.всех месяцев в Spinner
-
 
     def __init__(self, **kwargs):
-        MDScreen.__init__(self,**kwargs)
+        MDScreen.__init__(self, **kwargs)
 
 
-
-
-
+# def install_total_time_after_save(self):
+#     tuple_time = (self.hours_start_work, self.minutes_start_work, self.hours_end_work,
+#                   self.minutes_end_work, self.hours_start_lunch, self.minutes_start_lunch,
+#                   self.hours_end_lunch, self.minutes_end_lunch)
+#     self.work_time_calc(tuple_time)
+#
+# def update_statistic(self,choice_month:str=CURRENT_MONTH):
+#     lst_dates_current_month = self.get_dates_from_current_month(choice_month) # Список дат с нужным месяцем
+#     lst_sorted_num_current_month = self.get_num_days(lst_dates_current_month) # Список чисел нужного месяца
+#     lst_keys_dates = self.create_keys_date_choice_month(lst_sorted_num_current_month) # Список ["10 Октябрь"]
+#     time_statistic = self.update_total_time_statistic(lst_keys_dates) # Кортеж (170,45) часы минуты
+#     lst_all_month = self.get_set_all_month()
+#
+#     self.install_statistic(lst_sorted_num_current_month,lst_all_month,time_statistic,choice_month)
+#
+# def install_statistic(self,*args):
+#     self.spinner_month_statistic_lst = args[1] # Устан.всех месяцев в Spinner
+#     self.total_month_spinner = args[3]  # Устан.выбранного месяца в Spinner
+#     try:
+#         self.from_total_days_spinner = str(args[0][0])  # Первое число месяца
+#         self.to_total_days_spinner = str(args[0][-1])  # Последнее число месяца
+#     except IndexError:
+#         self.from_total_days_spinner = "0" # Первое число месяца, если словарь пустой!
+#         self.to_total_days_spinner = "0"   # Последнее число месяца, если словарь пустой!
+#
+#     self.list_from_total_days = map(str, args[0])  # Установка списка чисел
+#     self.list_to_total_days = map(str, args[0])  # Установка списка чисел
+#     self.total_hours_work_statistic = args[2][0] # Установка времени часы
+#     self.total_minutes_work_statistic = args[2][1] # Установка времени минуты
+#
+# def get_set_all_month(self):
+#     all_month = []
+#     for i in self.file_dict: # Получаем в i ключи словаря
+#         all_month.append(i.split()[1])
+#     return set(all_month)
+#
+# def get_dates_from_current_month(self, choice_month):
+#     list_month = []  # Только даты выбранного месяца
+#     for i in self.file_dict:  # Получаем в i ключи словаря
+#         if i.split()[1] == choice_month:  # Определяем нужный месяц из списка. Вычленяем название месяца
+#             list_month.append(i)  # Записываем в список только даты с нужным месяцем
+#     return list_month
+#
+# def get_num_days(self,lst_current_month:list):
+#     lst_num_days = []
+#     for i in lst_current_month: # Идём по списку месяца
+#         num_day = int(i.split()[0]) # Вычленяя только число месяца оборачивая в int()
+#         lst_num_days.append(num_day) # Только числа: int выбранного месяца
+#     lst_num_days.sort()
+#     return lst_num_days
+#
+# def create_keys_date_choice_month(self, sorted_num_current_days:list, month_choice:str=CURRENT_MONTH):
+#     keys_all_work = []
+#     for i in range(len(sorted_num_current_days)): # Проход по длинне списка дат
+#         keys_all_work.append(str(sorted_num_current_days[i]) + " " + month_choice) # создание строки ключа словаря и запись в список
+#     return keys_all_work
+#
+# def update_total_time_statistic(self,keys_all_work_data_sorted:list):
+#     hours = 0
+#     minutes = 0
+#     for i in keys_all_work_data_sorted: # ==========>>>>>>> ключи
+#         hours += int(self.file_dict[i].split(":")[0])
+#         minutes += int(self.file_dict[i].split(":")[1])
+#
+#     hours_delta = timedelta(hours=hours).total_seconds()
+#     minutes_delta = timedelta(minutes=minutes).total_seconds()
+#     total_time_in_sec = minutes_delta + hours_delta
+#     hours_total = int(total_time_in_sec // 3600)
+#     minut = int((total_time_in_sec - hours_total * 3600) / 60)
+#     return str(hours_total), str(minut)
+#
+# def list_sort_choices_num_days(self,list_num_choice_month,firstday,lastday):
+#     list_num_choice = []
+#     for i in list_num_choice_month:
+#         if int(firstday) <= i <= int(lastday):
+#             list_num_choice.append(i)
+#     return list_num_choice
+#
+# def create_choice_spinner(self, spinner):
+#     match spinner.uid:
+#         case 3581:
+#             self.from_total_days_spinner = spinner.text
+#             if self.total_month_spinner != '' and  self.to_total_days_spinner != '':
+#                 self.statistic_from_spinner(self.total_month_spinner)
+#         case 3617:
+#             self.total_month_spinner = spinner.text
+#             if self.from_total_days_spinner != '' and  self.to_total_days_spinner != '':
+#                 self.install_firsday_lastday(self.total_month_spinner)
+#                 self.statistic_from_spinner(self.total_month_spinner)
+#         case 3653:
+#             self.to_total_days_spinner = spinner.text
+#             if self.from_total_days_spinner != '' and self.total_month_spinner != '':
+#                 self.statistic_from_spinner(self.total_month_spinner)
+#
+# def install_firsday_lastday(self,c_month):
+#     """Устанавливает первый и последний день выбранного месяца после выбора spinner месяца"""
+#     lst_dates_choice_month = self.get_dates_from_current_month(c_month)  # Получаем даты с нужным месяцем list
+#     sort_num_choice = self.get_num_days(lst_dates_choice_month)  # Список int выбранных чисел для Spinner
+#
+#     self.from_total_days_spinner = str(sort_num_choice[0])
+#     self.to_total_days_spinner = str(sort_num_choice[-1])
+#
+# def statistic_from_spinner(self,choice_month):
+#     lst_dates_choice_month = self.get_dates_from_current_month(choice_month) # Получаем даты с нужным месяцем list
+#     sort_num_choice = self.get_num_days(lst_dates_choice_month) # Список int выбранных чисел для Spinner
+#
+#     list_sort_num_choice = self.list_sort_choices_num_days(sort_num_choice,self.from_total_days_spinner,
+#                                                            self.to_total_days_spinner)
+#     lst_keys_choice_date = self.create_keys_date_choice_month(list_sort_num_choice,choice_month)
+#     time_statistic = self.update_total_time_statistic(lst_keys_choice_date)  # Получаем кортеж (170,45) часы минуты
+#     self.install_totaltime_statistic(sort_num_choice,time_statistic)
+#
+# def install_totaltime_statistic(self,sort_num_choice, totaltime):
+#     self.list_from_total_days = map(str, sort_num_choice) # Установка списка чисел
+#     self.list_to_total_days = map(str, sort_num_choice)  # Установка списка чисел
+#
+#     self.total_hours_work_statistic = str(totaltime[0])  # Установка времени часы
+#     self.total_minutes_work_statistic = str(totaltime[1])  # Установка времени минуты
+#
+# def get_from_current_month(self, choice_month,firstday,lastday):
+#     list_dates = self.get_dates_from_current_month(choice_month) # даты выбранного месяца List
+#     list_num_choice_month = self.get_num_days(list_dates) # Список чисел выбранного месяца List
+#     list_keys = self.create_keys_date_choice_month(list_num_choice_month,choice_month) # Список ключей
+#     return list_keys
+#
+#
+# def my_callback(self,instance):
+#     self.lab_save_txt = "Отработано:"
+#     return False
+#
+# def write_file_time_work(self):
+#     with open("data_base.dat", 'wb') as files:
+#         pickle.dump(self.file_dict, files)
+#     Clock.schedule_once(self.my_callback, 2)
+#     self.lab_save_txt = "Сохранено"
+#     self.update_statistic()
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# def create_a_date_for_label(self):
+#     """Формируется ключ для словаря
+#     key_dict_total_data = "10 Января" """
+#     self.label_month_lst.clear()
+#     day = self.ids['day'].text
+#     month = self.ids['month'].text
+#     self.label_month_lst.append(day)
+#     self.label_month_lst.append(month)
+#     self.key_dict_total_data = day + " " + month
+#
+# def validate_file_time_work(self):
+#     data = self.key_dict_total_data
+#     time_work = self.value_dict_total_time_work
+#
+#     if data in self.file_dict:
+#         self.write_or_cancel_poput()
+#     else:
+#         self.file_dict[data] = time_work
+#         self.write_file_time_work()
+#
+# def overwriting(self):
+#     data = self.key_dict_total_data
+#     time_work = self.value_dict_total_time_work
+#     self.file_dict[data] = time_work
+#     self.write_file_time_work()
 
 
 class MyApp(MDApp):
@@ -633,19 +558,25 @@ class MyApp(MDApp):
         scm.add_widget(Pages_main())
         scm.add_widget(Pages_stat())
         return scm
+
     def quit_program(self):
         exit()
+
 
 class RouteTextInput(MDTextField):
     def __init__(self, **kwargs):
         MDTextField.__init__(self, **kwargs)
+
     def insert_text(self, value, from_undo=False):
         if value.isdigit():
             if len(self.text) < 3:
                 return super().insert_text(value, from_undo=from_undo)
+
+
 class KartaTextInput(MDTextField):
     def __init__(self, **kwargs):
         MDTextField.__init__(self, **kwargs)
+
     def insert_text(self, value, from_undo=False):
         if value.isdigit():
             if len(self.text) < 2:
@@ -654,8 +585,9 @@ class KartaTextInput(MDTextField):
 
 class MyPoput(Popup):
     message_info = StringProperty("")
-    def __init__(self,message,key,work_time,lab,flag=True,**kwargs):
-        Popup.__init__(self,**kwargs)
+
+    def __init__(self, message, key, work_time, lab, flag=True, **kwargs):
+        Popup.__init__(self, **kwargs)
         self.message_info = message
         self.key = key
         self.work_time = work_time
@@ -674,7 +606,8 @@ class MyPoput(Popup):
             self.change_save_text_label()
         self.dismiss()
         return
-    def my_callback(self,instance):
+
+    def my_callback(self, instance):
         self.label.text_color = "black"
         self.label.text = "Отработано:"
         return False
@@ -684,8 +617,6 @@ class MyPoput(Popup):
         self.label.theme_text_color = "Custom"
         self.label.text_color = "red"
         self.label.text = "Сохранено"
-
-
 
 
 if __name__ == '__main__':
